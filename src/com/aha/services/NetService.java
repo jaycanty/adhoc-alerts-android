@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Arrays;
 
 import com.aha.net.Network; 
 import com.aha.models.DataObject;
@@ -99,12 +100,6 @@ public class NetService extends Service{
 	
 	public String sendMessage(String msg) {
 
-		
-		/*
-	       byte[] data = new byte[512];
-
-	       data = msg.getBytes();
-	      */ 
 
 			DataObject dataObject = new DataObject();
 			dataObject.setMessage(msg);			
@@ -112,25 +107,35 @@ public class NetService extends Service{
 	       
 	       try
 	       {	
-	    	   
-	    	   
-	           
-	    	   
 	    	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	           ObjectOutputStream oos = new ObjectOutputStream(baos);
 	           oos.writeObject(dataObject);
 	           oos.flush();	    
 	           
-	           byte[] Buf= baos.toByteArray();
+	           byte[] buf= baos.toByteArray();
+	
+	           System.out.println(buf.length);
 	           
-	           System.out.println(Buf.length);
+	           int l = buf.length;
+	           
+	           byte[] len = new byte[4];
+	           
+	           for (int i = 0; i < 4; ++i) {
+	               int shift = i << 3; // i * 8
+	               len[3-i] = (byte)((l & (0xff << shift)) >>> shift);
+	           }
+	           
+	           byte[] packet = new byte[512];
+
+	           System.arraycopy(len, 0, packet, 0, len.length);
+	           System.arraycopy(buf, 0, packet, len.length, buf.length);	           
 	           
 	           outSocket = new DatagramSocket();
 	           outSocket.setBroadcast(true);
 
 	           DatagramPacket sendPacket;
 	           sendPacket = new DatagramPacket(
-	                           Buf, Buf.length, InetAddress.getByName("192.168.0.255"), 11111);
+	        		   packet, packet.length, InetAddress.getByName("192.168.0.255"), 11111);
 
 	           outSocket.send(sendPacket);
 
@@ -181,23 +186,28 @@ public class NetService extends Service{
 	    		{ 
 
 	    			// 52kb buffer
-	    			byte[] buffer = new byte[82];  			 
+	    			byte[] buffer = new byte[512];  			 
 	    			
 	    			DatagramPacket brodcastReceivePacket = new DatagramPacket(buffer,buffer.length);
 	    			
 	    			datagramSocket.receive(brodcastReceivePacket);
 	    			 
-	    			//String msg = new String(brodcastReceivePacket.getData());
+	    		      int len = 0;
+	    		      // byte[] -> int
+	    		      for (int i = 0; i < 4; ++i) {
+	    		          len |= (buffer[3-i] & 0xff) << (i << 3);
+	    		      }
+	    				
+	    		    System.out.println("Length = " + len);
+	    		      
+	    			byte[] packet = new byte[len];
+	    				 
+	    			System.arraycopy(buffer, 4, packet, 0, len);
 	    			
-	    			//msg = msg.trim();
-	    			
-	    			
-	    	        ByteArrayInputStream baos = new ByteArrayInputStream(buffer);
+	    	        ByteArrayInputStream baos = new ByteArrayInputStream(packet);
 	    	        ObjectInputStream oos = new ObjectInputStream(baos);
 	    	        DataObject inObject = (DataObject)oos.readObject();	    			
-	    			
-	    			
-	    			
+
 	    			System.out.println(inObject.getMessage());  // loose it   	
 	    			
 	    			handler.obtainMessage(3, -1, -1, inObject.getMessage()).sendToTarget();

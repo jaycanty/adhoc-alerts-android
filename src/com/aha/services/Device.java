@@ -214,7 +214,7 @@ public class Device {
 			out.writeBytes("sleep 5\n");
 			out.writeBytes("wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e /proc/calibration -i /system/etc/wifi/tiwlan.ini\n");
 			out.writeBytes("sleep 2\n");
-			out.writeBytes("ifconfig tiwlan0 192.168.0.5 netmask 255.255.255.0 up\n");
+			out.writeBytes("ifconfig tiwlan0 192.168.0.3 netmask 255.255.255.0 up\n");
 			out.writeBytes("exit\n");
 			out.flush();
 		

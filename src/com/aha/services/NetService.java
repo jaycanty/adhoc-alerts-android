@@ -13,7 +13,6 @@ import java.util.Arrays;
 
 import com.aha.net.Network; 
 import com.aha.models.DataObject;
-import com.aha.models.Device;
 
 import android.app.Activity;
 import android.app.Service;
@@ -97,6 +96,15 @@ public class NetService extends Service{
 		
 		return "Network Off";
 	}	
+	
+	public String getStatus() {
+
+		device.getStatus();
+			
+		//device.getStatus();
+		
+		return "stauta";
+	}
 	
 	public String sendMessage(String msg) {
 

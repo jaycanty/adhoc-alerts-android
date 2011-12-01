@@ -15,6 +15,9 @@ public class DataObject implements Serializable {
 	
 	
 	public String getMessage() {
+		
+		
+		
 		return message;
 	}
 	public void setMessage(String message) {

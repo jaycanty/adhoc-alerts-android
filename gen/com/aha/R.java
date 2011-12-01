@@ -24,6 +24,7 @@ public final class R {
         public static final int Message=0x7f060006;
         public static final int SendB=0x7f060007;
         public static final int TextStatus=0x7f060003;
+        public static final int connect=0x7f060009;
         public static final int disconnect=0x7f060008;
         public static final int linearLayout1=0x7f060004;
     }

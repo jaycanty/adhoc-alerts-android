@@ -20,6 +20,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -39,7 +42,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
-    private ArrayAdapter<String> conversationArray;
+    private ArrayAdapter<String> networkArray;
     ListView lv;
     
     @Override
@@ -56,11 +59,13 @@ public class NetworkActivity extends Activity implements OnClickListener {
         globalB.setOnClickListener(this);
         
         
-       conversationArray = new ArrayAdapter<String>(this, R.layout.message);
+       networkArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(conversationArray);        
-        
-        
+       lv.setAdapter(networkArray);        
+  
+       
+       for (int i=0; i<20; i++)
+    	   networkArray.add("user9: 192.168.0.3");
     }
         
     public void onClick(View v) {
@@ -79,7 +84,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
     	        break;
             case R.id.GlobalB:
     	        if (mBound) {
-    	            String msg = mService.netOff();
+    	            String msg = mService.getStatus();
     	            //tv.setText(msg);
     	        }
     	        break;	    	        
@@ -147,7 +152,53 @@ public class NetworkActivity extends Activity implements OnClickListener {
         public void onServiceDisconnected(ComponentName arg0) {
             mBound = false;
         }
-    };		
+    };	
+    
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }  
+    
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.disconnect:
+            mService.netOff();
+            return true;
+        case R.id.connect:
+	        if (mBound) {	    	        	
+	        	try {
+	        		
+	    			final String[] items = { "30minutes", "1hour", "2hours", "3hours" };
+		        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		        	builder.setTitle("How long are you staying?");
+		        	builder.setItems(items, new DialogInterface.OnClickListener() {
+		        	    public void onClick(DialogInterface dialog, int item) { 
+		        	    	String msg = mService.advertiseNet();
+		        	    	
+		        	    }
+		        	});
+		        	alert = builder.create();        
+		        	alert.show();
+		        	
+
+		        	
+	    		} catch (Exception e) {
+	    			e.printStackTrace();
+	    		}
+	        		
+	        		
+	        }
+            return true;            
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }    
 
 
 }

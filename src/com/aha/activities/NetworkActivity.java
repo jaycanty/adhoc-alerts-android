@@ -19,7 +19,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,7 +51,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.network);
-        tv = (TextView)this.findViewById(R.id.TextStatus); 		       
+        tv = (TextView)this.findViewById(R.id.StatusTV); 		       
         localB = (Button)this.findViewById(R.id.LocalB);
         globalB = (Button)this.findViewById(R.id.GlobalB);
         
@@ -58,11 +60,9 @@ public class NetworkActivity extends Activity implements OnClickListener {
         localB.setOnClickListener(this);
         globalB.setOnClickListener(this);
         
-        
        networkArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
        lv.setAdapter(networkArray);        
-  
        
        for (int i=0; i<20; i++)
     	   networkArray.add("user9: 192.168.0.3");
@@ -85,7 +85,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
             case R.id.GlobalB:
     	        if (mBound) {
     	            String msg = mService.getStatus();
-    	            //tv.setText(msg);
+    	            tv.setText(msg);
     	        }
     	        break;	    	        
         }	            		        	        
@@ -179,20 +179,17 @@ public class NetworkActivity extends Activity implements OnClickListener {
 		        	builder.setTitle("How long are you staying?");
 		        	builder.setItems(items, new DialogInterface.OnClickListener() {
 		        	    public void onClick(DialogInterface dialog, int item) { 
-		        	    	String msg = mService.advertiseNet();
+		        	 
+		        	    	mService.startNetwork(item, NetworkActivity.this, handler);
 		        	    	
 		        	    }
 		        	});
 		        	alert = builder.create();        
 		        	alert.show();
 		        	
-
-		        	
 	    		} catch (Exception e) {
 	    			e.printStackTrace();
 	    		}
-	        		
-	        		
 	        }
             return true;            
         default:
@@ -200,5 +197,23 @@ public class NetworkActivity extends Activity implements OnClickListener {
         }
     }    
 
+    
+    private final Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+	            case 3:
+	                String readMessage = (String) msg.obj;
+	                
+	                tv.setText(readMessage);
+	                
+	                // construct a string from the valid bytes in the buffer
+	                //networkArray.add("You:  " + readMessage);
+	            break;
+            }
+        }
+    }; 	  
+    
+    
 
 }

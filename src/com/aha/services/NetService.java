@@ -11,8 +11,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
 
-import com.aha.net.Network; 
 import com.aha.models.DataObject;
+import com.aha.models.NetworkInfo;
 
 import android.app.Activity;
 import android.app.Service;
@@ -26,21 +26,21 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.net.wifi.WifiInfo;
 
 public class NetService extends Service{
 	
 	private static WifiManager wfMan;
 	private final IBinder mBinder = new LocalBinder();
 	private final Device device = new Device();
-	private Network network;
 	private DatagramSocket outSocket;
 	private ReceiveMessageThread rmt;
+	private NetworkThread nt;
 	
 	  @Override
 	  public void onCreate() {
 	
 		  wfMan = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
-		  network = new Network();
 	  }	
 	
 	
@@ -80,8 +80,10 @@ public class NetService extends Service{
 		return "Wifi Disabled";					
 	}	
 	
-	public String advertiseNet() {		
+	public String advertiseNet(int lRank, Context context, Handler handler) {		
 
+		
+		
 		device.connectDevice();
 			
 		return "Advertising Network";
@@ -99,12 +101,13 @@ public class NetService extends Service{
 	
 	public String getStatus() {
 
-		device.getStatus();
+		if(device.doesNetworkExist())
+			return "Network is up";
+		else
+			return "Network off";
 			
-		//device.getStatus();
-		
-		return "stauta";
-	}
+	}	
+	
 	
 	public String sendMessage(String msg) {
 
@@ -163,7 +166,6 @@ public class NetService extends Service{
 
 	public void startDaemon(Context context, Handler handler)
 	{
-		
 		
 		rmt = new ReceiveMessageThread(context, handler);			
 		rmt.start();
@@ -231,6 +233,92 @@ public class NetService extends Service{
 	
 	
 	}//end inner class
+	
+
+	public void startNetwork (int lRank, Context context, Handler handler)
+	{
+		
+		nt = new NetworkThread(context, handler);			
+		nt.start();
+		
+	}	
+	
+	
+	private class NetworkThread extends Thread	{
+
+		Handler handler;
+		NetworkInfo ni;
+			
+		public NetworkThread(Context context, Handler handler) {
+			
+			System.out.println("Service has started!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			
+			this.handler = handler;
+			ni = NetworkInfo.getInstance();
+			
+		}			  
+		
+		public void run() 
+		{	
+	        try
+	        {
+	        	System.out.println("In thread");
+	        	
+	    		if(!ni.isNetworkUp()) 
+	    		{ 
+	    			System.out.println("A network is down");
+	    			
+	    			if (!ni.isDeviceInitiated())
+	    			{
+		    			device.connectDevice();
+		    			ni.setDeviceInitiated(true);
+		    			
+		    			System.out.println("Device is initialized");
+	    			}
+	    			
+	    			
+	    			System.out.println("Sleep started");
+	    			NetworkThread.sleep(80000);
+	    			System.out.println("Sleep ended");
+	    			
+	    			if(!device.doesNetworkExist())
+	    			{
+	    				System.out.println("A network does not exist");
+	    				device.disconnectDevice();
+	    				handler.obtainMessage(3, -1, -1, "There is no network available at this time").sendToTarget();
+	    			}
+	    			else	
+	    			{	
+	    				System.out.println("A network does exist");
+	    				ni.setNetworkUp(device.doesNetworkExist());
+	    				
+	    				handler.obtainMessage(3, -1, -1, "The network is up").sendToTarget();
+	    				// Setup WiFi
+	    				WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+	    				// Get WiFi status
+	    				WifiInfo info = wifi.getConnectionInfo();
+	    				
+	    				System.out.println("You are a member of " + info.getBSSID());	    				
+	    			}
+	    			
+	    			
+	    			//System.out.println(inObject.getMessage());  // loose it   	
+	    			
+	    			//handler.obtainMessage(3, -1, -1, "hello").sendToTarget();
+	    			
+	    		}        	
+	        	
+	        }
+	        catch (Exception e)
+	        {
+	        	e.printStackTrace();
+	        }		
+		}//end run			 	
+	}//end inner class	
+	
+	
+	
 	
 	public void test() 
 	{

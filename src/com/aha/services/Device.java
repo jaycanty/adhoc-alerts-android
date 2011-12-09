@@ -60,11 +60,11 @@ public class Device {
         }		
 	}	
 	
-	public String getStatus() {
+	public boolean doesNetworkExist() {
 		String model = Build.MODEL;		
 		int device = (Integer)deviceMap.get(model).intValue();		
 		System.out.println("" + device + " " + model);
-		String status = "";
+		boolean status = false;
 		
         switch (device) {	    	        
         case DROID2: 
@@ -79,6 +79,39 @@ public class Device {
     }		
 		return status;
 	}
+	
+	public void changeIP (String ip) {
+		String model = Build.MODEL;		
+		int device = (Integer)deviceMap.get(model).intValue();		
+		//System.out.println("" + device + " " + model);
+		
+		try {
+			
+			Process ps = Runtime.getRuntime().exec("su");
+			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
+			
+	        switch (device) {	    	        
+	        case DROID2: 
+	        	out.writeBytes("ifconfig tiwlan0 " + ip + "\n");
+		        break; 
+	        case NEXUSONE: 
+	        	out.writeBytes("ifconfig tiwlan0 " + ip + "\n");
+		        break; 
+	        case ERIS: 
+	        	out.writeBytes("ifconfig tiwlan0 " + ip + "\n");
+		        break;     
+	        }			
+			out.writeBytes("exit\n");
+			out.flush();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException se) {
+			// TODO Auto-generated catch block
+			se.printStackTrace();
+		} 		
+	}	
 	
 	public void initDroid() {		
 
@@ -119,7 +152,7 @@ public class Device {
 		} 
 	}	
 	
-	public String getStatusDroid() {
+	public boolean getStatusDroid() {
 
 		try {
 			Process ps = Runtime.getRuntime().exec("su");
@@ -147,9 +180,9 @@ public class Device {
         	System.out.println("----------------------" + array[0]);
         	
         	if (array.length == 10)
-        		return "up";
+        		return true;
         	else
-        		return "no-net";
+        		return false;
 		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -159,7 +192,7 @@ public class Device {
 			se.printStackTrace();
 		} 
 		
-		return "error";
+		return false;
 		
 	}
 

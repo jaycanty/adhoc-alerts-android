@@ -58,21 +58,17 @@ public class InitActivity extends Activity implements OnClickListener{
 	    		        	builder.setTitle("How long are you staying?");
 	    		        	builder.setItems(items, new DialogInterface.OnClickListener() {
 	    		        	    public void onClick(DialogInterface dialog, int item) { 
-	    		        	    	String msg = mService.advertiseNet();
+	    		        	    	//String msg = mService.advertiseNet();
 	    		        	    	Intent intent = new Intent(InitActivity.this, AlertsTab.class);
 	    	    	                startActivity(intent); 
 	    		        	    }
 	    		        	});
 	    		        	alert = builder.create();        
 	    		        	alert.show();
-	    		        	
-
-	    		        	
+	
 	    	    		} catch (Exception e) {
 	    	    			e.printStackTrace();
 	    	    		}
-	    	        		
-	    	        		
 	    	        }
 	    	        break;
                 case R.id.GlobalB:

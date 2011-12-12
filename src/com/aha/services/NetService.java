@@ -299,7 +299,11 @@ public class NetService extends Service{
 	    				// Get WiFi status
 	    				WifiInfo info = wifi.getConnectionInfo();
 	    				
-	    				System.out.println("You are a member of " + info.getBSSID());	    				
+	    				System.out.println("You are a member of " + info.getBSSID());	    
+	    				
+	    				
+	    				
+	    				
 	    			}
 	    			
 	    			

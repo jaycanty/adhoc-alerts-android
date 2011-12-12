@@ -82,8 +82,6 @@ public class NetService extends Service{
 	
 	public String advertiseNet(int lRank, Context context, Handler handler) {		
 
-		
-		
 		device.connectDevice();
 			
 		return "Advertising Network";

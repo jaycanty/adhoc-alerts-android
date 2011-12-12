@@ -17,16 +17,25 @@ public class Device {
 	public static final int DROID2 = 0;
 	public static final int NEXUSONE = 1;
 	public static final int ERIS = 2;	
-		
+	private int device;
+
 	public Device() {		
 		deviceMap.put("DROID2", new Integer(0));
 		deviceMap.put("Nexus One", new Integer(1));
 		deviceMap.put("Eris FroshedYo v11", new Integer(2));
 	}
 	
+	public int getDevice() {
+		return device;
+	}
+
+	public void setDevice(int device) {
+		this.device = device;
+	}	
+	
 	public void connectDevice() {
 		String model = Build.MODEL;		
-		int device = (Integer)deviceMap.get(model).intValue();		
+		device = (Integer)deviceMap.get(model).intValue();		
 		System.out.println("" + device + " " + model);
 		
         switch (device) {	    	        
@@ -71,10 +80,10 @@ public class Device {
         	status = getStatusDroid();
 	        break; 
         case NEXUSONE: 
-        	disconnectNexus();
+        	status = true;
 	        break; 
         case ERIS: 
-        	disconnectEris();
+        	status = true;
 	        break;     
     }		
 		return status;

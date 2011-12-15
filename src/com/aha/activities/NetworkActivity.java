@@ -169,6 +169,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
         switch (item.getItemId()) {
         case R.id.disconnect:
             mService.netOff();
+            tv.setText("Network is off");
             return true;
         case R.id.connect:
 	        if (mBound) {	    	        	

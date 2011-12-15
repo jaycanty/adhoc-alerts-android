@@ -36,8 +36,26 @@ public class NetService extends Service{
 	private DatagramSocket outSocket;
 	private ReceiveMessageThread rmt;
 	private NetworkThread nt;
+	private Context alertsContext;
+	private Handler alertsHandler;
 	
-	  @Override
+	public Context getAlertsContext() {
+		return alertsContext;
+	}
+
+	public void setAlertsContext(Context alertsContext) {
+		this.alertsContext = alertsContext;
+	}
+
+	public Handler getAlertsHandler() {
+		return alertsHandler;
+	}
+
+	public void setAlertsHandler(Handler alertsHandler) {
+		this.alertsHandler = alertsHandler;
+	}
+
+	@Override
 	  public void onCreate() {
 	
 		  wfMan = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
@@ -162,10 +180,10 @@ public class NetService extends Service{
 			
 	}	
 
-	public void startDaemon(Context context, Handler handler)
+	public void startDaemon()
 	{
 		
-		rmt = new ReceiveMessageThread(context, handler);			
+		rmt = new ReceiveMessageThread( );			
 		rmt.start();
 		
 	}
@@ -176,11 +194,9 @@ public class NetService extends Service{
 		DatagramSocket datagramSocket;
 		Handler handler;
 			
-		public ReceiveMessageThread(Context context, Handler handler) {
+		public ReceiveMessageThread() {
 			
 			System.out.println("Service has started!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			
-			this.handler = handler;		
 		}			  
 		
 		public void run() 
@@ -218,7 +234,10 @@ public class NetService extends Service{
 
 	    			System.out.println(inObject.getMessage());  // loose it   	
 	    			
-	    			handler.obtainMessage(3, -1, -1, inObject.getMessage()).sendToTarget();
+	    			if (alertsContext != null)
+	    				alertsHandler.obtainMessage(3, -1, -1, inObject.getMessage()).sendToTarget();
+	    			else
+	    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
 	    			
 	    		}        	
 	        	
@@ -244,6 +263,7 @@ public class NetService extends Service{
 	
 	private class NetworkThread extends Thread	{
 
+		Context context;
 		Handler handler;
 		NetworkInfo ni;
 			
@@ -252,6 +272,7 @@ public class NetService extends Service{
 			System.out.println("Service has started!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			
 			this.handler = handler;
+			this.context = context;
 			ni = NetworkInfo.getInstance();
 			
 		}			  
@@ -264,7 +285,7 @@ public class NetService extends Service{
 	        	
 	    		if(!ni.isNetworkUp()) 
 	    		{ 
-	    			System.out.println("A network is down");
+	    			System.out.println("Network is down");
 	    			
 	    			if (!ni.isDeviceInitiated())
 	    			{
@@ -291,26 +312,11 @@ public class NetService extends Service{
 	    				ni.setNetworkUp(device.doesNetworkExist());
 	    				
 	    				handler.obtainMessage(3, -1, -1, "The network is up").sendToTarget();
-	    				// Setup WiFi
-	    				WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-
-	    				// Get WiFi status
-	    				WifiInfo info = wifi.getConnectionInfo();
 	    				
-	    				System.out.println("You are a member of " + info.getBSSID());	    
+	    				startDaemon();
 	    				
-	    				
-	    				
-	    				
-	    			}
-	    			
-	    			
-	    			//System.out.println(inObject.getMessage());  // loose it   	
-	    			
-	    			//handler.obtainMessage(3, -1, -1, "hello").sendToTarget();
-	    			
+	    			}		
 	    		}        	
-	        	
 	        }
 	        catch (Exception e)
 	        {

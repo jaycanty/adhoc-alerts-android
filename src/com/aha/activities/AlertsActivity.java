@@ -49,7 +49,7 @@ public class AlertsActivity extends Activity implements OnClickListener {
         localB = (Button)this.findViewById(R.id.LocalB);
         globalB = (Button)this.findViewById(R.id.GlobalB);
         
-        System.out.println("Activity Created!!");
+        System.out.println("-----------------------------------------------------------------------Alerts Activity Created!!");
         
         localB.setOnClickListener(this);
         globalB.setOnClickListener(this);
@@ -77,7 +77,7 @@ public class AlertsActivity extends Activity implements OnClickListener {
     	        break;
             case R.id.GlobalB:
     	        if (mBound) {
-    	            mService.startDaemon(this, handler);
+    	            //mService.startDaemon(this, handler);
     	            //tv.setText(msg);
     	        }
     	        break;	    	        
@@ -94,6 +94,10 @@ public class AlertsActivity extends Activity implements OnClickListener {
         {
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	        
+	        mService.setAlertsContext(this);
+	        mService.setAlertsHandler(handler);
+	        
         } catch (Exception e) {
         	
         	e.printStackTrace();

@@ -45,6 +45,11 @@ public class NetService extends Service{
 
 	public void setAlertsContext(Context alertsContext) {
 		this.alertsContext = alertsContext;
+		
+		System.out.println("Context has been set");
+		
+		
+		
 	}
 
 	public Handler getAlertsHandler() {
@@ -187,6 +192,7 @@ public class NetService extends Service{
 		rmt.start();
 		
 	}
+	
 	
 	private class ReceiveMessageThread extends Thread{
 

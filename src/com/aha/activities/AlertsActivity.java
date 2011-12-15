@@ -95,9 +95,6 @@ public class AlertsActivity extends Activity implements OnClickListener {
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	        
-	        mService.setAlertsContext(this);
-	        mService.setAlertsHandler(handler);
-	        
         } catch (Exception e) {
         	
         	e.printStackTrace();
@@ -164,6 +161,9 @@ public class AlertsActivity extends Activity implements OnClickListener {
             LocalBinder binder = (LocalBinder) service;
             mService = binder.getService();
             mBound = true;
+            
+	        mService.setAlertsContext(AlertsActivity.this);
+	        mService.setAlertsHandler(handler);
         }
 
         //@Override

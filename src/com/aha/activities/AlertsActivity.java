@@ -1,7 +1,14 @@
 package com.aha.activities;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
 import com.aha.R;
 import android.widget.ArrayAdapter;
+
+import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
 
@@ -22,7 +29,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class AlertsActivity extends Activity implements OnClickListener {
@@ -40,6 +49,8 @@ public class AlertsActivity extends Activity implements OnClickListener {
     boolean mBound = false;
     private ArrayAdapter<String> conversationArray;
     ListView lv;
+    Handler handler; 
+    ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +68,18 @@ public class AlertsActivity extends Activity implements OnClickListener {
         
        conversationArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(conversationArray);        
+       lv.setAdapter(conversationArray);
+       
+       
+  /*     
+       ListAdapter restArray = new SimpleAdapter (
+           	this,	
+           	list,
+           	R.layout.conversation,        	
+           	new String[] {"name", "address"},
+           	new int[] {R.id.text1, R.id.text2}
+           );      
+  */     
         
     }
         
@@ -162,8 +184,31 @@ public class AlertsActivity extends Activity implements OnClickListener {
             mService = binder.getService();
             mBound = true;
             
-	        mService.setAlertsContext(AlertsActivity.this);
-	        mService.setAlertsHandler(handler);
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+        	            case 3:
+        	                conversationArray.clear();
+        	                NetworkInfo ni = NetworkInfo.getInstance();
+        	                Set<String> s = ni.conversations.keySet();
+        	                Iterator<String> iterator = s.iterator();
+        	                while (iterator.hasNext())
+        	                {
+            	                String originIP = iterator.next();
+        	                	int count = ni.conversations.get(originIP).size();
+        	                	conversationArray.add(originIP + " : " + count);
+        	                }
+        	                
+        	            break;
+                    }
+                }
+            };            
+            
+            NetworkInfo ni = NetworkInfo.getInstance();
+            
+	        ni.setAlertsContext(AlertsActivity.this);
+	        ni.setAlertsHandler(handler);
         }
 
         //@Override
@@ -172,17 +217,8 @@ public class AlertsActivity extends Activity implements OnClickListener {
         }
     };	
     
-    private final Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-	            case 3:
-	                String readMessage = (String) msg.obj;
-	                // construct a string from the valid bytes in the buffer
-	                conversationArray.add("You:  " + readMessage);
-	            break;
-            }
-        }
-    }; 	
+
+    
+    
 
 }

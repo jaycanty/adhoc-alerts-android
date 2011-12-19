@@ -10,6 +10,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.Vector;
 
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
@@ -36,29 +37,6 @@ public class NetService extends Service{
 	private DatagramSocket outSocket;
 	private ReceiveMessageThread rmt;
 	private NetworkThread nt;
-	private Context alertsContext;
-	private Handler alertsHandler;
-	
-	public Context getAlertsContext() {
-		return alertsContext;
-	}
-
-	public void setAlertsContext(Context alertsContext) {
-		this.alertsContext = alertsContext;
-		
-		System.out.println("Context has been set");
-		
-		
-		
-	}
-
-	public Handler getAlertsHandler() {
-		return alertsHandler;
-	}
-
-	public void setAlertsHandler(Handler alertsHandler) {
-		this.alertsHandler = alertsHandler;
-	}
 
 	@Override
 	  public void onCreate() {
@@ -187,9 +165,12 @@ public class NetService extends Service{
 
 	public void startDaemon()
 	{
-		
-		rmt = new ReceiveMessageThread( );			
-		rmt.start();
+		try {
+			rmt = new ReceiveMessageThread();			
+			rmt.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -198,11 +179,14 @@ public class NetService extends Service{
 
 		  
 		DatagramSocket datagramSocket;
-		Handler handler;
+		//Handler handler;
 			
 		public ReceiveMessageThread() {
 			
-			System.out.println("Service has started!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("alerts daemon has started!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			//this.handler = handler;
+			
+			
 		}			  
 		
 		public void run() 
@@ -214,36 +198,58 @@ public class NetService extends Service{
 	        	        	
 	    		while(true) 
 	    		{ 
-
-	    			// 52kb buffer
-	    			byte[] buffer = new byte[512];  			 
+	    			try {
+		    			// 52kb buffer
+		    			byte[] buffer = new byte[512];  			 
+		    			
+		    			DatagramPacket brodcastReceivePacket = new DatagramPacket(buffer,buffer.length);
+		    			
+		    			datagramSocket.receive(brodcastReceivePacket);
+		    			 
+		    		      int len = 0;
+		    		      // byte[] -> int
+		    		      for (int i = 0; i < 4; ++i) {
+		    		          len |= (buffer[3-i] & 0xff) << (i << 3);
+		    		      }
+		    				
+		    		    System.out.println("Length = " + len);
+		    		      
+		    			byte[] packet = new byte[len];
+		    				 
+		    			System.arraycopy(buffer, 4, packet, 0, len);
+		    			
+		    	        ByteArrayInputStream baos = new ByteArrayInputStream(packet);
+		    	        ObjectInputStream oos = new ObjectInputStream(baos);
+		    	        DataObject inObject = (DataObject)oos.readObject();	    			
+	
+		    			System.out.println(inObject.getMessage());  // loose it 
+		    			
+		    			String orginIP = brodcastReceivePacket.getAddress().getHostAddress();		    			
+		    			System.out.println(orginIP);
+		    			
+		    			NetworkInfo ni = NetworkInfo.getInstance();
+		    			
+		    			
+		    			if (ni.conversations.containsKey(orginIP)) {
+		    				Vector<DataObject> v = ni.conversations.get(orginIP);
+		    				v.add(inObject);
+		    			} else {
+			    			Vector<DataObject> v = new Vector<DataObject>();
+			    			v.add(inObject);
+			    			ni.conversations.put(brodcastReceivePacket.getAddress().getHostAddress(), v);	
+		    			}			
+		    			
+		    			Handler handler = ni.getAlertsHandler();
+		    			
+		    			if (handler != null)
+		    				handler.obtainMessage(3, -1, -1, "").sendToTarget();
+		    			else
+		    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
+		    			
+	    			} catch (Exception e) {
+	    				e.printStackTrace();
+	    			}
 	    			
-	    			DatagramPacket brodcastReceivePacket = new DatagramPacket(buffer,buffer.length);
-	    			
-	    			datagramSocket.receive(brodcastReceivePacket);
-	    			 
-	    		      int len = 0;
-	    		      // byte[] -> int
-	    		      for (int i = 0; i < 4; ++i) {
-	    		          len |= (buffer[3-i] & 0xff) << (i << 3);
-	    		      }
-	    				
-	    		    System.out.println("Length = " + len);
-	    		      
-	    			byte[] packet = new byte[len];
-	    				 
-	    			System.arraycopy(buffer, 4, packet, 0, len);
-	    			
-	    	        ByteArrayInputStream baos = new ByteArrayInputStream(packet);
-	    	        ObjectInputStream oos = new ObjectInputStream(baos);
-	    	        DataObject inObject = (DataObject)oos.readObject();	    			
-
-	    			System.out.println(inObject.getMessage());  // loose it   	
-	    			
-	    			if (alertsContext != null)
-	    				alertsHandler.obtainMessage(3, -1, -1, inObject.getMessage()).sendToTarget();
-	    			else
-	    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
 	    			
 	    		}        	
 	        	

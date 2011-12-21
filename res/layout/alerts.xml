@@ -12,23 +12,12 @@
 	   
     <ListView android:id="@+id/ListView"
         android:layout_width="500px"
-        android:layout_height="300px"
+        android:layout_height="400px"
         android:stackFromBottom="true"
         android:background="#ffffff"
         android:transcriptMode="alwaysScroll"
         android:layout_weight="1"/>	   
-	  	  
-		  <Button android:layout_width="fill_parent"
-		    android:layout_height="wrap_content" 
-		    android:layout_marginTop="60px"
-		    android:id="@+id/LocalB"
-		    android:text="send message">
-		  </Button>			  	  		  
-		  <Button android:layout_width="fill_parent"
-		    android:layout_height="wrap_content" 
-		    android:id="@+id/GlobalB"
-		    android:text="receive">
-		  </Button>		
+	  	  	
 </LinearLayout>
 <!--  
 	 <ScrollView android:id="@+id/ScrollView01"

@@ -8,6 +8,7 @@ import java.util.Set;
 import com.aha.R;
 import android.widget.ArrayAdapter;
 
+import com.aha.models.AppInfo;
 import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
@@ -28,13 +29,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-public class AlertsActivity extends Activity implements OnClickListener {
+public class AlertsActivity extends Activity implements OnItemClickListener {
 	
 	
 	Button infoB;
@@ -57,54 +60,28 @@ public class AlertsActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alerts);
         tv = (TextView)this.findViewById(R.id.TextStatus); 		       
-        localB = (Button)this.findViewById(R.id.LocalB);
-        globalB = (Button)this.findViewById(R.id.GlobalB);
-        
-        System.out.println("-----------------------------------------------------------------------Alerts Activity Created!!");
-        
-        localB.setOnClickListener(this);
-        globalB.setOnClickListener(this);
         
         
        conversationArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
        lv.setAdapter(conversationArray);
-       
-       
-  /*     
-       ListAdapter restArray = new SimpleAdapter (
-           	this,	
-           	list,
-           	R.layout.conversation,        	
-           	new String[] {"name", "address"},
-           	new int[] {R.id.text1, R.id.text2}
-           );      
-  */     
+       lv.setOnItemClickListener(this);
+        
         
     }
-        
-    public void onClick(View v) {
-        	
-        switch (v.getId()) {	    	        
-            case R.id.LocalB:
-    	        if (mBound) {	    	        	
-    	        	try {
-	        	    	Intent intent = new Intent(AlertsActivity.this, SendMessageActivity.class);
-    	                startActivity(intent); 
-    		        	
-    	    		} catch (Exception e) {
-    	    			e.printStackTrace();
-    	    		}	
-    	        } 
-    	        break;
-            case R.id.GlobalB:
-    	        if (mBound) {
-    	            //mService.startDaemon(this, handler);
-    	            //tv.setText(msg);
-    	        }
-    	        break;	    	        
-        }	            		        	        
-    }
+    
+    public void onItemClick(AdapterView<?> parent, View view,
+            int position, long id) {
+    		
+    	  String s = (String)((TextView) view).getText();
+    	  String[] sa = s.split(" : ");
+    	  String orginIP = sa[0];
+    	
+          Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
+          intent.putExtra("originIP", orginIP);
+          startActivity(intent);           
+          
+        }     
 
     @Override
     protected void onStart() {
@@ -205,10 +182,10 @@ public class AlertsActivity extends Activity implements OnClickListener {
                 }
             };            
             
-            NetworkInfo ni = NetworkInfo.getInstance();
+            AppInfo ai = AppInfo.getInstance();
             
-	        ni.setAlertsContext(AlertsActivity.this);
-	        ni.setAlertsHandler(handler);
+	        ai.setAlertsContext(AlertsActivity.this);
+	        ai.setAlertsHandler(handler);
         }
 
         //@Override

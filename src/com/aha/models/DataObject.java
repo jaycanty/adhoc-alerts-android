@@ -11,6 +11,7 @@ public class DataObject implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int messageType;
 	private String destinationAddress;
+	private String orginAddress;
 	private String message;
 
 	
@@ -28,6 +29,14 @@ public class DataObject implements Serializable {
 
 	public void setDestinationAddress(String destinationAddress) {
 		this.destinationAddress = destinationAddress;
+	}
+
+	public String getOrginAddress() {
+		return orginAddress;
+	}
+
+	public void setOrginAddress(String orginAddress) {
+		this.orginAddress = orginAddress;
 	}
 
 	public String getMessage() {

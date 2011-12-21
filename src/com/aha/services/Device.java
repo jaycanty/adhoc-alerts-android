@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.aha.models.NetworkInfo;
+
 
 import android.os.Build;
 
@@ -131,6 +133,9 @@ public class Device {
 			out.writeBytes("sh /data/jay/connect.sh\n");
 			out.writeBytes("exit\n");
 			out.flush();
+			
+			NetworkInfo.getInstance().setMyIP("192.168.0.5");
+			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

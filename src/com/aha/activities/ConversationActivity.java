@@ -1,5 +1,8 @@
 package com.aha.activities;
 
+import java.net.DatagramSocket;
+import java.util.Vector;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -17,33 +20,48 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aha.R;
+import com.aha.models.DataObject;
+import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
 
-public class SendMessageActivity extends Activity implements OnClickListener {
+public class ConversationActivity extends Activity implements OnClickListener {
 	
 
-	Button sendB;
-	EditText message;
-	TextView address;
+	
+	
+	EditText address, message;
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
+    String orginIP;
     
+	Button sendB;
+	EditText et;
+	ListView lv;
+	private ArrayAdapter<String> conversationArray;    
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sendmessage);
-        sendB = (Button)this.findViewById(R.id.SendB);
-        address = (TextView)this.findViewById(R.id.Address);
-        address.append("192.168.0.255");
-        message = (EditText)this.findViewById(R.id.Message);
-        //globalB = (Button)this.findViewById(R.id.GlobalB);
-                   
-        sendB.setOnClickListener(this);
+        setContentView(R.layout.conversation);
+
+        conversationArray = new ArrayAdapter<String>(this, R.layout.message);
+        lv = (ListView)this.findViewById(R.id.ListView); 
+        lv.setAdapter(conversationArray);           
         
+        et = (EditText)this.findViewById(R.id.EditText);  
+        
+        sendB = (Button)this.findViewById(R.id.SendB);                 
+        sendB.setOnClickListener(this);
+  
+    }
+    
+    private void initConversation() {
+    	
+    	
+    	
     }
         
     public void onClick(View v) {
@@ -51,18 +69,10 @@ public class SendMessageActivity extends Activity implements OnClickListener {
         switch (v.getId()) {	    	        
             case R.id.SendB:
     	        if (mBound) {
-
-    	        	System.out.println("bound to service");
-    	        	
-    	        	mService.test();
     	        	
     	        	try {
-    	        		
-    	        		String msg = message.getText().toString();
-    		        	mService.sendMessage("192.168.0.255", msg);
-    		        	message.setText("");
-    		        	address.append("192.168.0.255");
-    	        		
+    	        		mService.sendMessage(orginIP, et.getText().toString());
+    	        		et.setText("");
     	    		} catch (Exception e) {
     	    			e.printStackTrace();
     	    		}	
@@ -79,8 +89,25 @@ public class SendMessageActivity extends Activity implements OnClickListener {
         
         try
         {
-	        Intent intent = new Intent(this, NetService.class);
+	        // bind to service
+        	Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	        
+	        // init conversation array
+	        conversationArray.clear();
+	        
+	        this.orginIP = getIntent().getExtras().getString("originIP");
+	        
+	        System.out.println("OIP:  " + orginIP);	        
+	        
+	        NetworkInfo ni = NetworkInfo.getInstance();
+	        
+	        Vector<DataObject> v = ni.conversations.get(orginIP);
+	        
+	        for (int i=0; i<v.size(); i++) {
+	        	conversationArray.add(v.get(i).getMessage());
+	        }
+	        
         } catch (Exception e) {
         	
         	e.printStackTrace();
@@ -138,3 +165,4 @@ public class SendMessageActivity extends Activity implements OnClickListener {
 	
 
 }
+

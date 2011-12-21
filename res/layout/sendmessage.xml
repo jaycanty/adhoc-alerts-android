@@ -4,22 +4,34 @@
     android:layout_height="fill_parent" 
     android:orientation="vertical" 
     xmlns:android="http://schemas.android.com/apk/res/android">
-        <EditText android:text="To:" 
+        <TextView 
+        android:text="To: " 
         android:id="@+id/Address" 
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content">
-        </EditText>    
-        <EditText android:text="Message:" 
+        </TextView>    
+        <EditText 
+        android:hint="Message:"
         android:id="@+id/Message" 
-        android:layout_width="fill_parent" 
-        android:layout_height="150px"
-        android:gravity="top">
-        </EditText>
+        android:layout_width="match_parent" 
+        android:layout_height="match_parent"
+        android:gravity="top"
+        android:layout_weight="1">
+        </EditText>       
+        
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
         <Button android:text="SEND" 
         android:id="@+id/SendB" 
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_weight="1">
         </Button>
-    
+
+    </LinearLayout>    
     
  </LinearLayout>

@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Vector;
 
+import com.aha.models.AppInfo;
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
 
@@ -108,12 +109,13 @@ public class NetService extends Service{
 	}	
 	
 	
-	public String sendMessage(String msg) {
+	public String sendMessage(String destinationIP, String msg) {
 
 
 			DataObject dataObject = new DataObject();
-			dataObject.setMessage(msg);			
-			
+			dataObject.setMessage(msg);	
+			dataObject.setDestinationAddress(destinationIP);
+			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
 	       
 	       try
 	       {	
@@ -239,7 +241,7 @@ public class NetService extends Service{
 			    			ni.conversations.put(brodcastReceivePacket.getAddress().getHostAddress(), v);	
 		    			}			
 		    			
-		    			Handler handler = ni.getAlertsHandler();
+		    			Handler handler = AppInfo.getInstance().getAlertsHandler();
 		    			
 		    			if (handler != null)
 		    				handler.obtainMessage(3, -1, -1, "").sendToTarget();
@@ -304,12 +306,15 @@ public class NetService extends Service{
 		    			device.connectDevice();
 		    			ni.setDeviceInitiated(true);
 		    			
+		    			
 		    			System.out.println("Device is initialized");
+		    			
+		    			
 	    			}
 	    			
 	    			
 	    			System.out.println("Sleep started");
-	    			NetworkThread.sleep(80000);
+	    			NetworkThread.sleep(5000); //(80000);
 	    			System.out.println("Sleep ended");
 	    			
 	    			if(!device.doesNetworkExist())

@@ -25,7 +25,10 @@
         </activity> 
         <activity android:name="com.aha.activities.SendMessageActivity"
                   android:label="@string/app_name">
-        </activity>                   
+        </activity>  
+        <activity android:name="com.aha.activities.ConversationActivity"
+                  android:label="@string/app_name">
+        </activity>                           
 	    <service android:name="com.aha.services.NetService"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />

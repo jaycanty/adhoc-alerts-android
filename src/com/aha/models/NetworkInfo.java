@@ -21,8 +21,7 @@ public class NetworkInfo {
 	public HashMap<String, Vector<DataObject>> conversations;
 	public HashMap<String, String> network;
 	
-	private Context alertsContext;
-	private Handler alertsHandler;	
+
 	//private boolean 
 	
 	protected NetworkInfo(){
@@ -50,32 +49,6 @@ public class NetworkInfo {
 	public synchronized void setMyIP(String myIP) {
 		this.myIP = myIP;
 	}
-
-
-	public synchronized Context getAlertsContext() {
-		return alertsContext;
-	}
-
-	public synchronized void setAlertsContext(Context alertsContext) {
-		this.alertsContext = alertsContext;
-		
-		System.out.println("Context has been set");
-		
-		
-		
-	}
-
-	public synchronized Handler getAlertsHandler() {
-		return alertsHandler;
-	}
-
-	public synchronized void setAlertsHandler(Handler alertsHandler) {
-		this.alertsHandler = alertsHandler;
-		
-		System.out.println("handler has been set: " + this.alertsHandler.toString());
-		
-		
-	}	
 	
 	public synchronized boolean isNetworkUp() {
 		return networkUp;

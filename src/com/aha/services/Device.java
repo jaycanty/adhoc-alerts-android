@@ -39,16 +39,17 @@ public class Device {
 		String model = Build.MODEL;		
 		device = (Integer)deviceMap.get(model).intValue();		
 		System.out.println("" + device + " " + model);
+		String ip = NetworkInfo.getInstance().getInitIP();
 		
         switch (device) {	    	        
 	        case DROID2: 
-	        	initDroid();
+	        	initDroid(ip);
 		        break; 
 	        case NEXUSONE: 
-	        	initNexus();
+	        	initNexus(ip);
 		        break; 
 	        case ERIS: 
-	        	initEris();
+	        	initEris(ip);
 		        break;     
         }		
 	}	
@@ -124,17 +125,21 @@ public class Device {
 		} 		
 	}	
 	
-	public void initDroid() {		
+	public void initDroid(String ip) {		
 
 		try {
 			
+			
+			
+			//NetworkInfo.getInstance().setMyIP("192.168.0.5");
+			
 			Process ps = Runtime.getRuntime().exec("su");
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
-			out.writeBytes("sh /data/jay/connect.sh\n");
+			out.writeBytes("sh /data/jay/connect.sh " + ip + "\n");
 			out.writeBytes("exit\n");
 			out.flush();
 			
-			NetworkInfo.getInstance().setMyIP("192.168.0.5");
+			
 			
 			
 		} catch (IOException e) {
@@ -210,14 +215,14 @@ public class Device {
 		
 	}
 
-	public void initNexus() {		
+	public void initNexus(String ip) {		
 
 		try {
 			Process ps = Runtime.getRuntime().exec("su");
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
 			out.writeBytes("insmod /system/lib/modules/bcm4329.ko\n");
 			out.writeBytes("sleep 5\n");
-			out.writeBytes("ifconfig eth0 192.168.0.4 netmask 255.255.255.0\n");
+			out.writeBytes("ifconfig eth0 " + ip + " netmask 255.255.255.0\n");
 			out.writeBytes("ifconfig eth0 up\n");
 			out.writeBytes("./data/data/android.tether/bin/iwconfig eth0 mode ad-hoc\n");
 			out.writeBytes("./data/data/android.tether/bin/iwconfig eth0 essid hope\n");
@@ -252,7 +257,7 @@ public class Device {
 		} 
 	}	
 	
-	public void initEris() {		
+	public void initEris(String ip) {		
 
 		try {
 			Process ps = Runtime.getRuntime().exec("su");
@@ -261,7 +266,7 @@ public class Device {
 			out.writeBytes("sleep 5\n");
 			out.writeBytes("wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e /proc/calibration -i /system/etc/wifi/tiwlan.ini\n");
 			out.writeBytes("sleep 2\n");
-			out.writeBytes("ifconfig tiwlan0 192.168.0.3 netmask 255.255.255.0 up\n");
+			out.writeBytes("ifconfig tiwlan0 " + ip + " netmask 255.255.255.0 up\n");
 			out.writeBytes("exit\n");
 			out.flush();
 		

@@ -32,6 +32,8 @@ import android.net.wifi.WifiInfo;
 
 public class NetService extends Service{
 	
+	private static final String BROADCASTIP = "192.168.0.255";
+	
 	private static WifiManager wfMan;
 	private final IBinder mBinder = new LocalBinder();
 	private final Device device = new Device();
@@ -147,7 +149,7 @@ public class NetService extends Service{
 
 	           DatagramPacket sendPacket;
 	           sendPacket = new DatagramPacket(
-	        		   packet, packet.length, InetAddress.getByName("192.168.0.255"), 11111);
+	        		   packet, packet.length, InetAddress.getByName(destinationIP), 11111);
 
 	           outSocket.send(sendPacket);
 
@@ -241,12 +243,17 @@ public class NetService extends Service{
 			    			ni.conversations.put(brodcastReceivePacket.getAddress().getHostAddress(), v);	
 		    			}			
 		    			
-		    			Handler handler = AppInfo.getInstance().getAlertsHandler();
+		    			Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
+		    			Handler convoHandler = AppInfo.getInstance().getConversationHandler();
 		    			
-		    			if (handler != null)
-		    				handler.obtainMessage(3, -1, -1, "").sendToTarget();
+		    			if (alertsHandler != null)
+		    				alertsHandler.obtainMessage(3, -1, -1, "").sendToTarget();
 		    			else
 		    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
+		    			
+		    			if (convoHandler != null)
+		    				convoHandler.obtainMessage(3, -1, -1, "").sendToTarget();		    			
+		    			
 		    			
 	    			} catch (Exception e) {
 	    				e.printStackTrace();
@@ -332,7 +339,11 @@ public class NetService extends Service{
 	    				
 	    				startDaemon();
 	    				
-	    			}		
+	    			}	
+	    			
+	    			
+	    			
+	    			
 	    		}        	
 	        }
 	        catch (Exception e)

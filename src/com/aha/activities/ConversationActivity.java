@@ -1,6 +1,8 @@
 package com.aha.activities;
 
 import java.net.DatagramSocket;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -10,7 +12,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -20,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aha.R;
+import com.aha.models.AppInfo;
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
@@ -35,6 +40,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     AlertDialog alert;
     boolean mBound = false;
     String orginIP;
+    Handler handler;
     
 	Button sendB;
 	EditText et;
@@ -55,7 +61,6 @@ public class ConversationActivity extends Activity implements OnClickListener {
         
         sendB = (Button)this.findViewById(R.id.SendB);                 
         sendB.setOnClickListener(this);
-  
     }
     
     private void initConversation() {
@@ -153,6 +158,36 @@ public class ConversationActivity extends Activity implements OnClickListener {
             LocalBinder binder = (LocalBinder) service;
             mService = binder.getService();
             mBound = true;
+            
+            
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+        	            case 3:
+        	    	        conversationArray.clear();
+        	    	        
+        	    	        System.out.println("OIP:  " + orginIP);	        
+        	    	        
+        	    	        NetworkInfo ni = NetworkInfo.getInstance();
+        	    	        
+        	    	        Vector<DataObject> v = ni.conversations.get(orginIP);
+        	    	        
+        	    	        for (int i=0; i<v.size(); i++) {
+        	    	        	conversationArray.add(v.get(i).getMessage());
+        	    	        }
+        	                
+        	            break;
+                    }
+                }
+            };            
+            
+            AppInfo ai = AppInfo.getInstance();
+            
+	        ai.setConversationContext(ConversationActivity.this);
+	        ai.setConversationHandler(handler);            
+            
+            
         }
 
         //@Override

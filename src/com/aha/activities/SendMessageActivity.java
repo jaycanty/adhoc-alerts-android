@@ -61,7 +61,7 @@ public class SendMessageActivity extends Activity implements OnClickListener {
     	        		String msg = message.getText().toString();
     		        	mService.sendMessage("192.168.0.255", msg);
     		        	message.setText("");
-    		        	address.append("192.168.0.255");
+    		        	address.setText("To: 192.168.0.255");
     	        		
     	    		} catch (Exception e) {
     	    			e.printStackTrace();

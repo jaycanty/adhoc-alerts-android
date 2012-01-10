@@ -4,10 +4,6 @@ import java.io.Serializable;
 
 public class DataObject implements Serializable {
 	
-	public static final int DISCOVERY = 0;
-	public static final int BROADCAST = 1;
-	public static final int ACK = 2;
-	
 	private static final long serialVersionUID = 1L;
 	private int messageType;
 	private String destinationAddress;

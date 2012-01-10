@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import com.aha.models.AppInfo;
+import com.aha.models.Constants;
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
 
@@ -31,9 +32,7 @@ import android.provider.Settings;
 import android.net.wifi.WifiInfo;
 
 public class NetService extends Service{
-	
-	private static final String BROADCASTIP = "192.168.0.255";
-	
+		
 	private static WifiManager wfMan;
 	private final IBinder mBinder = new LocalBinder();
 	private final Device device = new Device();
@@ -111,13 +110,7 @@ public class NetService extends Service{
 	}	
 	
 	
-	public String sendMessage(String destinationIP, String msg) {
-
-
-			DataObject dataObject = new DataObject();
-			dataObject.setMessage(msg);	
-			dataObject.setDestinationAddress(destinationIP);
-			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
+	public String sendMessage(DataObject dataObject) {
 	       
 	       try
 	       {	
@@ -149,7 +142,7 @@ public class NetService extends Service{
 
 	           DatagramPacket sendPacket;
 	           sendPacket = new DatagramPacket(
-	        		   packet, packet.length, InetAddress.getByName(destinationIP), 11111);
+	        		   packet, packet.length, InetAddress.getByName(dataObject.getDestinationAddress()), 11111);
 
 	           outSocket.send(sendPacket);
 
@@ -161,7 +154,7 @@ public class NetService extends Service{
 	       }
 	       //Toast.makeText(AdHoc.this, msg, Toast.LENGTH_SHORT).show();
 	       
-	       System.out.println("message should be sent " + msg);
+	       System.out.println("message should be sent " + dataObject.getMessage());
 			
 			return "hello";
 			
@@ -233,27 +226,31 @@ public class NetService extends Service{
 		    			
 		    			NetworkInfo ni = NetworkInfo.getInstance();
 		    			
-		    			
-		    			if (ni.conversations.containsKey(orginIP)) {
-		    				Vector<DataObject> v = ni.conversations.get(orginIP);
-		    				v.add(inObject);
-		    			} else {
-			    			Vector<DataObject> v = new Vector<DataObject>();
-			    			v.add(inObject);
-			    			ni.conversations.put(brodcastReceivePacket.getAddress().getHostAddress(), v);	
-		    			}			
-		    			
-		    			Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
-		    			Handler convoHandler = AppInfo.getInstance().getConversationHandler();
-		    			
-		    			if (alertsHandler != null)
-		    				alertsHandler.obtainMessage(3, -1, -1, "").sendToTarget();
-		    			else
-		    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
-		    			
-		    			if (convoHandler != null)
-		    				convoHandler.obtainMessage(3, -1, -1, "").sendToTarget();		    			
-		    			
+		    			if(!inObject.getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
+		    			{
+			    		
+			    			if (ni.conversations.containsKey(orginIP)) {
+			    				Vector<DataObject> v = ni.conversations.get(orginIP);
+			    				v.add(inObject);
+			    			} else {
+				    			Vector<DataObject> v = new Vector<DataObject>();
+				    			v.add(inObject);
+				    			ni.conversations.put(brodcastReceivePacket.getAddress().getHostAddress(), v);	
+			    			}			
+			    			
+			    			
+			    			
+			    			Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
+			    			Handler convoHandler = AppInfo.getInstance().getConversationHandler();
+			    			
+			    			if (alertsHandler != null)
+			    				alertsHandler.obtainMessage(3, -1, -1, "").sendToTarget();
+			    			else
+			    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
+			    			
+			    			if (convoHandler != null)
+			    				convoHandler.obtainMessage(3, -1, -1, "").sendToTarget();		    			
+		    			}
 		    			
 	    			} catch (Exception e) {
 	    				e.printStackTrace();
@@ -340,8 +337,12 @@ public class NetService extends Service{
 	    				startDaemon();
 	    				
 	    			}	
-	    			
-	    			
+/*	    			
+	    			DataObject dataObject = new DataObject();
+	    			dataObject.setDestinationAddress(Constants.BROADCAST);
+	    			dataObject.setOrginAddress(ni.getMyIP());
+	    			dataObject.setMessageType(Constants.JOIN);
+	*/    			
 	    			
 	    			
 	    		}        	

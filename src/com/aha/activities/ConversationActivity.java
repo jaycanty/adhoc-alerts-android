@@ -76,7 +76,14 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	        if (mBound) {
     	        	
     	        	try {
-    	        		mService.sendMessage(orginIP, et.getText().toString());
+    	    			DataObject dataObject = new DataObject();
+    	    			dataObject.setMessage(et.getText().toString());	
+    	    			dataObject.setDestinationAddress(orginIP);
+    	    			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
+    	    			
+    	    			
+    	        		
+    	        		mService.sendMessage(dataObject);
     	        		et.setText("");
     	    		} catch (Exception e) {
     	    			e.printStackTrace();
@@ -99,19 +106,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	        
 	        // init conversation array
-	        conversationArray.clear();
-	        
-	        this.orginIP = getIntent().getExtras().getString("originIP");
-	        
-	        System.out.println("OIP:  " + orginIP);	        
-	        
-	        NetworkInfo ni = NetworkInfo.getInstance();
-	        
-	        Vector<DataObject> v = ni.conversations.get(orginIP);
-	        
-	        for (int i=0; i<v.size(); i++) {
-	        	conversationArray.add(v.get(i).getMessage());
-	        }
+	        loadList();
 	        
         } catch (Exception e) {
         	
@@ -165,18 +160,8 @@ public class ConversationActivity extends Activity implements OnClickListener {
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
         	            case 3:
-        	    	        conversationArray.clear();
-        	    	        
-        	    	        System.out.println("OIP:  " + orginIP);	        
-        	    	        
-        	    	        NetworkInfo ni = NetworkInfo.getInstance();
-        	    	        
-        	    	        Vector<DataObject> v = ni.conversations.get(orginIP);
-        	    	        
-        	    	        for (int i=0; i<v.size(); i++) {
-        	    	        	conversationArray.add(v.get(i).getMessage());
-        	    	        }
-        	                
+        	            loadList();	
+        	            	
         	            break;
                     }
                 }
@@ -189,7 +174,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
             
             
         }
-
+   
         //@Override
         public void onServiceDisconnected(ComponentName arg0) {
             mBound = false;
@@ -197,7 +182,21 @@ public class ConversationActivity extends Activity implements OnClickListener {
     };	
 	
 	
-	
+    private synchronized void loadList() 
+    {
+        conversationArray.clear();
+        
+        System.out.println("OIP:  " + orginIP);	        
+        
+        NetworkInfo ni = NetworkInfo.getInstance();
+        
+        Vector<DataObject> v = ni.conversations.get(orginIP);
+        
+        for (int i=0; i<v.size(); i++) {
+        	conversationArray.add(v.get(i).getMessage());
+        }        	
+    	
+    }	
 
 }
 

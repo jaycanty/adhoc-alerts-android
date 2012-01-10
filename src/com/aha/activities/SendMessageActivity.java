@@ -17,6 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aha.R;
+import com.aha.models.Constants;
+import com.aha.models.DataObject;
+import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
 
@@ -38,7 +41,7 @@ public class SendMessageActivity extends Activity implements OnClickListener {
         setContentView(R.layout.sendmessage);
         sendB = (Button)this.findViewById(R.id.SendB);
         address = (TextView)this.findViewById(R.id.Address);
-        address.append("192.168.0.255");
+        address.append("EVERYONE");
         message = (EditText)this.findViewById(R.id.Message);
         //globalB = (Button)this.findViewById(R.id.GlobalB);
                    
@@ -59,9 +62,16 @@ public class SendMessageActivity extends Activity implements OnClickListener {
     	        	try {
     	        		
     	        		String msg = message.getText().toString();
-    		        	mService.sendMessage("192.168.0.255", msg);
+    	        		
+    	    			DataObject dataObject = new DataObject();
+    	    			dataObject.setDestinationAddress(Constants.BROADCAST);
+    	    			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
+    	    			dataObject.setMessageType(Constants.ALERT); 
+    	    			dataObject.setMessage(msg);
+    	        		
+    		        	mService.sendMessage(dataObject);
     		        	message.setText("");
-    		        	address.setText("To: 192.168.0.255");
+    		        	//address.setText("To: 192.168.0.255");
     	        		
     	    		} catch (Exception e) {
     	    			e.printStackTrace();

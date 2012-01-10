@@ -31,10 +31,7 @@ import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
 
 public class ConversationActivity extends Activity implements OnClickListener {
-	
 
-	
-	
 	EditText address, message;
     NetService mService;
     AlertDialog alert;
@@ -52,6 +49,8 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversation);
+        
+        orginIP = getIntent().getExtras().getString("originIP");
 
         conversationArray = new ArrayAdapter<String>(this, R.layout.message);
         lv = (ListView)this.findViewById(R.id.ListView); 
@@ -80,9 +79,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	    			dataObject.setMessage(et.getText().toString());	
     	    			dataObject.setDestinationAddress(orginIP);
     	    			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
-    	    			
-    	    			
-    	        		
+
     	        		mService.sendMessage(dataObject);
     	        		et.setText("");
     	    		} catch (Exception e) {
@@ -107,7 +104,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
 	        
 	        // init conversation array
 	        loadList();
-	        
+	              
         } catch (Exception e) {
         	
         	e.printStackTrace();
@@ -154,14 +151,12 @@ public class ConversationActivity extends Activity implements OnClickListener {
             mService = binder.getService();
             mBound = true;
             
-            
             handler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
         	            case 3:
-        	            loadList();	
-        	            	
+        	            loadList();	     	            
         	            break;
                     }
                 }
@@ -171,8 +166,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
             
 	        ai.setConversationContext(ConversationActivity.this);
 	        ai.setConversationHandler(handler);            
-            
-            
+
         }
    
         //@Override

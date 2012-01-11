@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.aha.R;
 import com.aha.models.AppInfo;
+import com.aha.models.Constants;
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
@@ -79,6 +80,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	    			dataObject.setMessage(et.getText().toString());	
     	    			dataObject.setDestinationAddress(orginIP);
     	    			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
+    	    			dataObject.setMessageType(Constants.ALERT); 
 
     	        		mService.sendMessage(dataObject);
     	        		et.setText("");

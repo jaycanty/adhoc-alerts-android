@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Vector;
 
+import com.aha.R;
 import com.aha.models.AppInfo;
 import com.aha.models.Constants;
 import com.aha.models.DataObject;
@@ -218,45 +219,12 @@ public class NetService extends Service{
 		    	        ByteArrayInputStream baos = new ByteArrayInputStream(packet);
 		    	        ObjectInputStream oos = new ObjectInputStream(baos);
 		    	        DataObject inObject = (DataObject)oos.readObject();	    			
-	
-		    			System.out.println(inObject.getMessage());  // loose it 
-		    			
-		    			String orginIP = brodcastReceivePacket.getAddress().getHostAddress();		    			
-		    			System.out.println(orginIP);
-		    			
-		    			NetworkInfo ni = NetworkInfo.getInstance();
-		    			
-		    			if(!inObject.getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
-		    			{
-			    		
-			    			if (ni.conversations.containsKey(orginIP)) {
-			    				Vector<DataObject> v = ni.conversations.get(orginIP);
-			    				v.add(inObject);
-			    			} else {
-				    			Vector<DataObject> v = new Vector<DataObject>();
-				    			v.add(inObject);
-				    			ni.conversations.put(brodcastReceivePacket.getAddress().getHostAddress(), v);	
-			    			}			
-			    			
-			    			
-			    			
-			    			Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
-			    			Handler convoHandler = AppInfo.getInstance().getConversationHandler();
-			    			
-			    			if (alertsHandler != null)
-			    				alertsHandler.obtainMessage(3, -1, -1, "").sendToTarget();
-			    			else
-			    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
-			    			
-			    			if (convoHandler != null)
-			    				convoHandler.obtainMessage(3, -1, -1, "").sendToTarget();		    			
-		    			}
+		    	        
+		    	        handleMessage(inObject);
 		    			
 	    			} catch (Exception e) {
 	    				e.printStackTrace();
 	    			}
-	    			
-	    			
 	    		}        	
 	        	
 	        }
@@ -268,6 +236,78 @@ public class NetService extends Service{
 	
 	
 	}//end inner class
+	
+	public void handleMessage (DataObject dataObject)
+	{
+		
+		MessageHandler mh = new MessageHandler(dataObject);			
+		mh.start();
+		
+	}	
+
+	private class MessageHandler extends Thread	{
+
+		DataObject inObject;
+		NetworkInfo ni;
+			
+		public MessageHandler(DataObject dataObject) {
+			
+			System.out.println("Service has started!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			
+			this.inObject = dataObject;
+			ni = NetworkInfo.getInstance();
+			
+		}			  
+		
+		public void run() 
+		{	
+	        try
+	        {
+    			System.out.println("Message" + inObject.getMessage());  // loose it 
+    			
+    			String orginIP = inObject.getOrginAddress();		    			
+    			System.out.println("OIP: " + orginIP);
+    			
+    			NetworkInfo ni = NetworkInfo.getInstance();
+    			
+    			if(!inObject.getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
+    			{
+    				
+    				switch(inObject.getMessageType()){	    	        
+	    	            case Constants.JOIN:
+	 
+	    	    	    break;
+	    	            case Constants.ALERT:
+	    	    			if (ni.conversations.containsKey(orginIP)) {
+	    	    				Vector<DataObject> v = ni.conversations.get(orginIP);
+	    	    				v.add(inObject);
+	    	    			} else {
+	    		    			Vector<DataObject> v = new Vector<DataObject>();
+	    		    			v.add(inObject);
+	    		    			ni.conversations.put(orginIP, v);	
+	    	    			}			
+
+	    	    			Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
+	    	    			Handler convoHandler = AppInfo.getInstance().getConversationHandler();
+	    	    			
+	    	    			if (alertsHandler != null)
+	    	    				alertsHandler.obtainMessage(3, -1, -1, "").sendToTarget();
+	    	    			else
+	    	    				System.out.println("The activity hasn't strated: " + inObject.getMessage());
+	    	    			
+	    	    			if (convoHandler != null)
+	    	    				convoHandler.obtainMessage(3, -1, -1, "").sendToTarget();		    	            	 
+	        	    	break;    	    	    
+    				}
+    					    			
+    			}	        	
+	        }
+	        catch (Exception e)
+	        {
+	        	e.printStackTrace();
+	        }		
+		}//end run			 	
+	}//end inner class		
 	
 
 	public void startNetwork (int lRank, Context context, Handler handler)
@@ -353,7 +393,6 @@ public class NetService extends Service{
 	        }		
 		}//end run			 	
 	}//end inner class	
-	
 	
 	
 	

@@ -94,6 +94,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         {
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	        loadList();
 	        
         } catch (Exception e) {
         	
@@ -167,17 +168,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
         	            case 3:
-        	                conversationArray.clear();
-        	                NetworkInfo ni = NetworkInfo.getInstance();
-        	                Set<String> s = ni.conversations.keySet();
-        	                Iterator<String> iterator = s.iterator();
-        	                while (iterator.hasNext())
-        	                {
-            	                String originIP = iterator.next();
-        	                	int count = ni.conversations.get(originIP).size();
-        	                	conversationArray.add(originIP + " : " + count);
-        	                }
-        	                
+        	            	loadList();
         	            break;
                     }
                 }
@@ -196,7 +187,20 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     };	
     
 
-    
+    private synchronized void loadList()
+    {
+        conversationArray.clear();
+        NetworkInfo ni = NetworkInfo.getInstance();
+        Set<String> s = ni.conversations.keySet();
+        Iterator<String> iterator = s.iterator();
+        while (iterator.hasNext())
+        {
+            String originIP = iterator.next();
+        	int count = ni.conversations.get(originIP).size();
+        	conversationArray.add(originIP + " : " + count);
+        }    	
+    	
+    }
     
 
 }

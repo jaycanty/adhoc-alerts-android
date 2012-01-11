@@ -81,6 +81,9 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	    			dataObject.setDestinationAddress(orginIP);
     	    			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
     	    			dataObject.setMessageType(Constants.ALERT); 
+    	    			
+    	    			NetworkInfo.getInstance().conversations.get(orginIP).add(dataObject);
+    	    			loadList();
 
     	        		mService.sendMessage(dataObject);
     	        		et.setText("");
@@ -189,7 +192,11 @@ public class ConversationActivity extends Activity implements OnClickListener {
         Vector<DataObject> v = ni.conversations.get(orginIP);
         
         for (int i=0; i<v.size(); i++) {
-        	conversationArray.add(v.get(i).getMessage());
+        	
+        	if (v.get(i).getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
+        		conversationArray.add("ME: " + v.get(i).getMessage());
+        	else
+        		conversationArray.add(v.get(i).getOrginAddress() + ": " + v.get(i).getMessage());
         }        	
     	
     }	

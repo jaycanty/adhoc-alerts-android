@@ -268,6 +268,7 @@ public class NetService extends Service{
     			String orginIP = inObject.getOrginAddress();		    			
     			System.out.println("OIP: " + orginIP);
     			
+    			
     			NetworkInfo ni = NetworkInfo.getInstance();
     			
     			if(!inObject.getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
@@ -352,8 +353,7 @@ public class NetService extends Service{
 		    			
 		    			
 		    			System.out.println("Device is initialized");
-		    			
-		    			
+
 	    			}
 	    			
 	    			
@@ -377,14 +377,13 @@ public class NetService extends Service{
 	    				startDaemon();
 	    				
 	    			}	
-/*	    			
+	/*    			
 	    			DataObject dataObject = new DataObject();
 	    			dataObject.setDestinationAddress(Constants.BROADCAST);
 	    			dataObject.setOrginAddress(ni.getMyIP());
-	    			dataObject.setMessageType(Constants.JOIN);
-	*/    			
-	    			
-	    			
+	    			dataObject.setMessageType(Constants.JOIN);    			
+	    			sendMessage(dataObject);
+	 */   			
 	    		}        	
 	        }
 	        catch (Exception e)

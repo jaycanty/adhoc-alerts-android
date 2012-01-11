@@ -45,7 +45,7 @@ public class NetworkInfo {
 	public synchronized String getInitIP()
 	{		
 		Random r = new Random();
-		String ip = initIPList.get(r.nextInt(11) + 1);
+		String ip = initIPList.get(r.nextInt(10) + 1);
 		this.myIP = ip;
 		return ip;
 	}

@@ -15,30 +15,32 @@ public class NetworkInfo {
 	private static NetworkInfo instance = null;
 	private boolean networkUp;
 	private boolean deviceInitiated;
+	private boolean joined;
 	
 	private String myIP;
 
 	
 	public HashMap<String, Vector<DataObject>> conversations;
-	public HashMap<String, String> network;
+	//public HashMap<String, String> network;
+	public Vector<String> network;
 	
-	private Vector<String> initIPList; 
+	public Vector<String> initIPList; 
 	
 	protected NetworkInfo(){
 		
 		networkUp = false;
 		deviceInitiated = false;
+		joined = false;
 		conversations = new HashMap<String, Vector<DataObject>>(); //(HashMap<String, Vector<DataObject>>)Collections.synchronizedMap(new HashMap<String, Vector<DataObject>>());
-		network = new HashMap<String, String>(); //(HashMap<String, String>)Collections.synchronizedMap(new HashMap<String, String>());
+		//network = new HashMap<String, String>(); //(HashMap<String, String>)Collections.synchronizedMap(new HashMap<String, String>());
 		initIPList = new Vector<String>();
+		network = new Vector<String>();
 
 		for (int i=1; i<11; i++)
 		{
 			initIPList.add("192.168.0." + i);
 			System.out.println("IP: " + initIPList.get(i-1));
-		}
-		
-		
+		}	
 	}	
 	
 	
@@ -82,6 +84,16 @@ public class NetworkInfo {
 
 	public synchronized void setDeviceInitiated(boolean deviceInitiated) {
 		this.deviceInitiated = deviceInitiated;
+	}
+
+
+	public boolean isJoined() {
+		return joined;
+	}
+
+
+	public void setJoined(boolean joined) {
+		this.joined = joined;
 	}	
 
 }

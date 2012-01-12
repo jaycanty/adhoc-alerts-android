@@ -1,5 +1,7 @@
 package com.aha.activities;
 
+import java.util.Vector;
+
 import android.app.Activity;
 
 
@@ -8,6 +10,10 @@ import android.app.Activity;
 
 import com.aha.R;
 import android.widget.ArrayAdapter;
+
+import com.aha.models.AppInfo;
+import com.aha.models.DataObject;
+import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
 
@@ -40,18 +46,21 @@ public class NetworkActivity extends Activity implements OnClickListener {
 	Button localB;
 	Button staticB;
 	Button globalB;
-	TextView tv;
+	TextView statusTV;
+	TextView ipTV;
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
     private ArrayAdapter<String> networkArray;
     ListView lv;
+    Handler handler;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.network);
-        tv = (TextView)this.findViewById(R.id.StatusTV); 		       
+        statusTV = (TextView)this.findViewById(R.id.StatusTV);
+        ipTV = (TextView)this.findViewById(R.id.IPTV);
         localB = (Button)this.findViewById(R.id.LocalB);
         globalB = (Button)this.findViewById(R.id.GlobalB);
         
@@ -85,7 +94,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
             case R.id.GlobalB:
     	        if (mBound) {
     	            String msg = mService.getStatus();
-    	            tv.setText(msg);
+    	            statusTV.setText(msg);
     	        }
     	        break;	    	        
         }	            		        	        
@@ -146,6 +155,28 @@ public class NetworkActivity extends Activity implements OnClickListener {
             LocalBinder binder = (LocalBinder) service;
             mService = binder.getService();
             mBound = true;
+            
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+        	            case 3:
+        	            String ip = (String) msg.obj;
+        	            if (ip.length() > 0)
+        	            	ipTV.setText(ip);
+        	            
+        	            loadList();	     	            
+        	            break;
+                    }
+                }
+            };            
+            
+            AppInfo ai = AppInfo.getInstance();
+            
+	        ai.setNetworkContext(NetworkActivity.this);
+	        ai.setNetworkHandler(handler);             
+            
+            
         }
 
         //@Override
@@ -169,7 +200,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
         switch (item.getItemId()) {
         case R.id.disconnect:
             mService.netOff();
-            tv.setText("Network is off");
+            statusTV.setText("Network is off");
             return true;
         case R.id.connect:
 	        if (mBound) {	    	        	
@@ -196,25 +227,18 @@ public class NetworkActivity extends Activity implements OnClickListener {
         default:
             return super.onOptionsItemSelected(item);
         }
-    }    
-
+    }    	  
     
-    private final Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-	            case 3:
-	                String readMessage = (String) msg.obj;
-	                
-	                tv.setText(readMessage);
-	                
-	                // construct a string from the valid bytes in the buffer
-	                //networkArray.add("You:  " + readMessage);
-	            break;
-            }
-        }
-    }; 	  
-    
-    
+    private synchronized void loadList() 
+    {
+        networkArray.clear();
+               
+        NetworkInfo ni = NetworkInfo.getInstance();
+       
+        for (int i=0; i<ni.network.size(); i++) {
+        	networkArray.add(ni.network.get(i));
+        }        	
+    	
+    }	    
 
 }

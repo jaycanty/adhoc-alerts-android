@@ -276,8 +276,39 @@ public class NetService extends Service{
     				
     				switch(inObject.getMessageType()){	    	        
 	    	            case Constants.JOIN:
-	 
+	    	            	
+	    	            	System.out.println("JOIN");
+	    	            	if (ni.network.size() > 0)
+	    	            	{
+	    		    			DataObject outObject = new DataObject();
+	    		    			outObject.setDestinationAddress(inObject.getOrginAddress());
+	    		    			outObject.setOrginAddress(ni.getMyIP());
+	    		    			outObject.setMessageType(Constants.JOIN_ACK); 
+	    		    			outObject.setMessage("192.168.0.13");
+	    		    			sendMessage(outObject);	 
+	    		    			ni.network.add("192.168.0.13");
+	    	            	}
 	    	    	    break;
+	    	            case Constants.JOIN_ACK:
+	    	            	
+	    	            	System.out.println("JOIN_ACK");
+	    	            	ni.network.add(inObject.getOrginAddress());
+	    	            	
+	    	            	String ip = "";
+	    	            	
+	    	            	if(!(ni.getMyIP().equalsIgnoreCase(inObject.getMessage())))
+	    	            	{	
+	    	            		ip = inObject.getMessage();
+	    	            		ni.setMyIP(inObject.getMessage());
+	    	            	}
+	    	    			Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+	    	    			
+	    	    			if (netHandler != null)
+	    	    				netHandler.obtainMessage(3, -1, -1, ip).sendToTarget();
+	    	    			else
+	    	    				System.out.println("The activity hasn't strated: ");
+   	            	
+	    	    	    break;	    	    	    
 	    	            case Constants.ALERT:
 	    	    			if (ni.conversations.containsKey(orginIP)) {
 	    	    				Vector<DataObject> v = ni.conversations.get(orginIP);
@@ -350,10 +381,7 @@ public class NetService extends Service{
 	    			{
 		    			device.connectDevice();
 		    			ni.setDeviceInitiated(true);
-		    			
-		    			
 		    			System.out.println("Device is initialized");
-
 	    			}
 	    			
 	    			
@@ -377,13 +405,21 @@ public class NetService extends Service{
 	    				startDaemon();
 	    				
 	    			}	
-	/*    			
+   			
 	    			DataObject dataObject = new DataObject();
 	    			dataObject.setDestinationAddress(Constants.BROADCAST);
 	    			dataObject.setOrginAddress(ni.getMyIP());
 	    			dataObject.setMessageType(Constants.JOIN);    			
 	    			sendMessage(dataObject);
-	 */   			
+	    			
+	    			NetworkThread.sleep(5000);
+	    			
+	    			if(!ni.isJoined())
+	    			{
+	    				//shut it down time is up
+	    				//if an eris keep working
+	    			}
+  			
 	    		}        	
 	        }
 	        catch (Exception e)

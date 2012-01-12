@@ -8,7 +8,11 @@ import android.os.Handler;
 
 public class AppInfo {
 
+	
 	private static AppInfo instance = null;
+	
+	private Context networkContext = null;
+	private Handler networkHandler = null;		
 	private Context alertsContext = null;
 	private Handler alertsHandler = null;	
 	private Context conversationContext = null;
@@ -24,6 +28,22 @@ public class AppInfo {
 	}		
 	
 	
+	public Context getNetworkContext() {
+		return networkContext;
+	}
+
+	public void setNetworkContext(Context networkContext) {
+		this.networkContext = networkContext;
+	}
+
+	public Handler getNetworkHandler() {
+		return networkHandler;
+	}
+
+	public void setNetworkHandler(Handler networkHandler) {
+		this.networkHandler = networkHandler;
+	}
+
 	public synchronized Context getAlertsContext() {
 		return alertsContext;
 	}

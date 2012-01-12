@@ -98,9 +98,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
-        // Bind to LocalService
-        //System.out.println("Trying to bind to the service");
-        
+        // Bind to LocalService        
         try
         {
 	        // bind to service
@@ -184,9 +182,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     private synchronized void loadList() 
     {
         conversationArray.clear();
-        
-        System.out.println("OIP:  " + orginIP);	        
-        
+                
         NetworkInfo ni = NetworkInfo.getInstance();
         
         Vector<DataObject> v = ni.conversations.get(orginIP);

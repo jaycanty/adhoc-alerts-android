@@ -76,8 +76,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     	  String s = (String)((TextView) view).getText();
     	  String[] sa = s.split(" : ");
     	  String orginIP = sa[0];
-    	  System.out.println("OIP: " + orginIP);
-    	
+    	  
           Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
           intent.putExtra("originIP", orginIP);
           startActivity(intent);           
@@ -87,9 +86,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     @Override
     protected void onStart() {
         super.onStart();
-        // Bind to LocalService
-        //System.out.println("Trying to bind to the service");
-        
+        // Bind to LocalService        
         try
         {
 	        Intent intent = new Intent(this, NetService.class);

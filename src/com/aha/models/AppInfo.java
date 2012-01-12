@@ -50,11 +50,6 @@ public class AppInfo {
 
 	public synchronized void setAlertsContext(Context alertsContext) {
 		this.alertsContext = alertsContext;
-		
-		System.out.println("Context has been set");
-		
-		
-		
 	}
 
 	public synchronized Handler getAlertsHandler() {
@@ -62,10 +57,7 @@ public class AppInfo {
 	}
 
 	public synchronized void setAlertsHandler(Handler alertsHandler) {
-		this.alertsHandler = alertsHandler;
-		
-		System.out.println("handler has been set: " + this.alertsHandler.toString());
-		
+		this.alertsHandler = alertsHandler;		
 		
 	}
 

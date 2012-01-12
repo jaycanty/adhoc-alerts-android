@@ -63,9 +63,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
         ipTV = (TextView)this.findViewById(R.id.IPTV);
         localB = (Button)this.findViewById(R.id.LocalB);
         globalB = (Button)this.findViewById(R.id.GlobalB);
-        
-        System.out.println("Activity Created!!");
-        
+                
         localB.setOnClickListener(this);
         globalB.setOnClickListener(this);
         
@@ -160,12 +158,15 @@ public class NetworkActivity extends Activity implements OnClickListener {
                 @Override
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
-        	            case 3:
-        	            String ip = (String) msg.obj;
-        	            if (ip.length() > 0)
-        	            	ipTV.setText(ip);
-        	            
-        	            loadList();	     	            
+	    	            case 2:
+	        	            String ip = (String) msg.obj;
+	        	            if (ip.length() > 0)
+	        	            	ipTV.setText(ip);
+	        	            
+	        	            loadList();	     	            
+	        	        break;
+                    	case 3:
+        	            statusTV.setText((String) msg.obj);	     	            
         	            break;
                     }
                 }
@@ -212,7 +213,7 @@ public class NetworkActivity extends Activity implements OnClickListener {
 		        	builder.setItems(items, new DialogInterface.OnClickListener() {
 		        	    public void onClick(DialogInterface dialog, int item) { 
 		        	 
-		        	    	mService.startNetwork(item, NetworkActivity.this, handler);
+		        	    	mService.startNetwork(item);
 		        	    	
 		        	    }
 		        	});

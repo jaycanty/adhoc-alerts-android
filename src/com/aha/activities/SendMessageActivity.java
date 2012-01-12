@@ -54,8 +54,6 @@ public class SendMessageActivity extends Activity implements OnClickListener {
         switch (v.getId()) {	    	        
             case R.id.SendB:
     	        if (mBound) {
-
-    	        	System.out.println("bound to service");
     	        	
     	        	mService.test();
     	        	

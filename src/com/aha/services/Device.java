@@ -38,7 +38,6 @@ public class Device {
 	public void connectDevice() {
 		String model = Build.MODEL;		
 		device = (Integer)deviceMap.get(model).intValue();		
-		System.out.println("" + device + " " + model);
 		String ip = NetworkInfo.getInstance().getInitIP();
 		
         switch (device) {	    	        
@@ -57,7 +56,6 @@ public class Device {
 	public void disconnectDevice() {
 		String model = Build.MODEL;		
 		int device = (Integer)deviceMap.get(model).intValue();		
-		System.out.println("" + device + " " + model);
 		
         switch (device) {	    	        
 	        case DROID2: 
@@ -75,7 +73,6 @@ public class Device {
 	public boolean doesNetworkExist() {
 		String model = Build.MODEL;		
 		int device = (Integer)deviceMap.get(model).intValue();		
-		System.out.println("" + device + " " + model);
 		boolean status = false;
 		
         switch (device) {	    	        
@@ -183,10 +180,8 @@ public class Device {
 			out.flush();
             BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));
             String line = null;
-            System.out.println("<OUTPUT>");
             
         	line = br.readLine();
-        	System.out.println("----------------------" + line);
         	
 			br.close();
 			out.writeBytes("exit\n");
@@ -194,9 +189,6 @@ public class Device {
 			out.close();        	
         	
         	String[] array = line.split(" "); 
-			
-        	System.out.println("----------------------" + "" + array.length);
-        	System.out.println("----------------------" + array[0]);
         	
         	if (array.length == 10)
         		return true;

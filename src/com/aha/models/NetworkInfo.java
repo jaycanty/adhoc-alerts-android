@@ -39,7 +39,6 @@ public class NetworkInfo {
 		for (int i=1; i<11; i++)
 		{
 			initIPList.add("192.168.0." + i);
-			System.out.println("IP: " + initIPList.get(i-1));
 		}	
 	}	
 	
@@ -47,7 +46,7 @@ public class NetworkInfo {
 	public synchronized String getInitIP()
 	{		
 		Random r = new Random();
-		String ip = initIPList.get(r.nextInt(10) + 1);
+		String ip = initIPList.get(r.nextInt(9) + 1);
 		this.myIP = ip;
 		return ip;
 	}

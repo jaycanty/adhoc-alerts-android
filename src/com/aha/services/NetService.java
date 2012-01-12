@@ -107,7 +107,7 @@ public class NetService extends Service {
 
 	}
 
-	public String sendMessage(DataObject dataObject) {
+	public synchronized String sendMessage(DataObject dataObject) {
 
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -189,6 +189,7 @@ public class NetService extends Service {
 							len |= (buffer[3 - i] & 0xff) << (i << 3);
 						}
 
+						
 						//System.out.println("Length = " + len);
 
 						byte[] packet = new byte[len];
@@ -350,12 +351,14 @@ public class NetService extends Service {
 
 						startDaemon();
 						
+						NetworkThread.sleep(1000);
+						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);
 						dataObject.setOrginAddress(ni.getMyIP());
 						dataObject.setMessageType(Constants.JOIN);
-						sendMessage(dataObject);						
-
+						sendMessage(dataObject);		
+										
 					}
 
 

@@ -38,7 +38,7 @@ public class Device {
 	public void connectDevice() {
 		String model = Build.MODEL;		
 		device = (Integer)deviceMap.get(model).intValue();		
-		String ip = NetworkInfo.getInstance().getInitIP();
+		String ip = NetworkInfo.getInstance().getMyIP();
 		
         switch (device) {	    	        
 	        case DROID2: 

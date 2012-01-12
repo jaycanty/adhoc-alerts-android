@@ -73,6 +73,9 @@ public class NetworkActivity extends Activity implements OnClickListener {
        
        for (int i=0; i<20; i++)
     	   networkArray.add("user9: 192.168.0.3");
+       
+       ipTV.setText(NetworkInfo.getInstance().getInitIP());
+       
     }
         
     public void onClick(View v) {

@@ -33,11 +33,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class NetworkActivity extends Activity implements OnClickListener {
+public class NetworkActivity extends Activity implements OnClickListener, OnItemClickListener {
 	
 	
 	Button infoB;
@@ -69,7 +71,8 @@ public class NetworkActivity extends Activity implements OnClickListener {
         
        networkArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(networkArray);        
+       lv.setAdapter(networkArray); 
+       lv.setOnItemClickListener(this);
        
        for (int i=0; i<20; i++)
     	   networkArray.add("user9: 192.168.0.3");
@@ -77,6 +80,18 @@ public class NetworkActivity extends Activity implements OnClickListener {
        ipTV.setText(NetworkInfo.getInstance().getInitIP());
        
     }
+    
+    public void onItemClick(AdapterView<?> parent, View view,
+            int position, long id) {
+    		    	
+    	  String orginIP = (String)((TextView) view).getText();
+    	  
+          Intent intent = new Intent(NetworkActivity.this, ConversationActivity.class);
+          intent.putExtra("originIP", orginIP);
+          startActivity(intent);           
+          
+        }    
+    
         
     public void onClick(View v) {
         	
@@ -111,6 +126,8 @@ public class NetworkActivity extends Activity implements OnClickListener {
         {
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	        
+	        loadList();
         } catch (Exception e) {
         	
         	e.printStackTrace();

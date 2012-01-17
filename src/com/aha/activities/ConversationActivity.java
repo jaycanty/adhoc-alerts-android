@@ -51,8 +51,6 @@ public class ConversationActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.conversation);
         
-        orginIP = getIntent().getExtras().getString("originIP");
-
         conversationArray = new ArrayAdapter<String>(this, R.layout.message);
         lv = (ListView)this.findViewById(R.id.ListView); 
         lv.setAdapter(conversationArray);           
@@ -69,9 +67,9 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	
     }
         
-    public void onClick(View v) {
+    public void onClick(View view) {
         	
-        switch (v.getId()) {	    	        
+        switch (view.getId()) {	    	        
             case R.id.SendB:
     	        if (mBound) {
     	        	
@@ -82,8 +80,18 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	    			dataObject.setOrginAddress(NetworkInfo.getInstance().getMyIP());
     	    			dataObject.setMessageType(Constants.ALERT); 
     	    			
-    	    			NetworkInfo.getInstance().conversations.get(orginIP).add(dataObject);
-    	    			loadList();
+    	    			NetworkInfo ni = NetworkInfo.getInstance();
+    	    			
+						if (ni.conversations.containsKey(orginIP)) {
+							Vector<DataObject> v = ni.conversations
+									.get(orginIP);
+							v.add(dataObject);
+						} else {
+							Vector<DataObject> v = new Vector<DataObject>();
+							v.add(dataObject);
+							ni.conversations.put(orginIP, v);
+						}    	    			
+       	    			loadList();
 
     	        		mService.sendMessage(dataObject);
     	        		et.setText("");
@@ -101,7 +109,8 @@ public class ConversationActivity extends Activity implements OnClickListener {
         // Bind to LocalService        
         try
         {
-	        // bind to service
+        	orginIP = getIntent().getExtras().getString("originIP");
+        	// bind to service
         	Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	        
@@ -178,6 +187,8 @@ public class ConversationActivity extends Activity implements OnClickListener {
         }
     };	
 	
+    
+    
 	
     private synchronized void loadList() 
     {
@@ -187,13 +198,16 @@ public class ConversationActivity extends Activity implements OnClickListener {
         
         Vector<DataObject> v = ni.conversations.get(orginIP);
         
-        for (int i=0; i<v.size(); i++) {
-        	
-        	if (v.get(i).getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
-        		conversationArray.add("ME: " + v.get(i).getMessage());
-        	else
-        		conversationArray.add(v.get(i).getOrginAddress() + ": " + v.get(i).getMessage());
-        }        	
+        if (v!=null)
+        {
+	        for (int i=0; i<v.size(); i++) {
+	        	
+	        	if (v.get(i).getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
+	        		conversationArray.add("ME: " + v.get(i).getMessage());
+	        	else
+	        		conversationArray.add(v.get(i).getOrginAddress() + ": " + v.get(i).getMessage());
+	        }   
+        }
     	
     }	
 

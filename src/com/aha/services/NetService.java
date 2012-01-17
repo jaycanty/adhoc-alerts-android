@@ -10,6 +10,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Vector;
 
 import com.aha.R;
@@ -92,7 +93,32 @@ public class NetService extends Service {
 	public String netOff() {
 
 		device.disconnectDevice();
+		
+		NetworkInfo ni = NetworkInfo.getInstance();
+		
+		ni.setDeviceInitiated(false);
+		ni.setNetworkUp(false);
+		ni.setJoined(false);
+		ni.network.clear();
+		ni.conversations.clear();
+		
+		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
+		
+		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
+		
+		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+		
+		if (netHandler != null)
+			netHandler.obtainMessage(2, -1, -1, "").sendToTarget();		
 
+		if (alertsHandler != null)
+			alertsHandler.obtainMessage(3, -1, -1, "")
+					.sendToTarget();
+		
+		if (convoHandler != null)
+			convoHandler.obtainMessage(3, -1, -1, "")
+					.sendToTarget();		
+		
 		// device.getStatus();
 
 		return "Network Off";
@@ -164,7 +190,7 @@ public class NetService extends Service {
 	private class ReceiveMessageThread extends Thread {
 
 		DatagramSocket datagramSocket;
-
+		ObjectInputStream oos;
 
 		public ReceiveMessageThread() {}
 
@@ -173,7 +199,7 @@ public class NetService extends Service {
 				datagramSocket = new DatagramSocket(11111);
 				datagramSocket.setBroadcast(true);
 
-				while (true) {
+				while (NetworkInfo.getInstance().isNetworkUp()) {
 					try {
 						// 52kb buffer
 						byte[] buffer = new byte[512];
@@ -198,7 +224,7 @@ public class NetService extends Service {
 
 						ByteArrayInputStream baos = new ByteArrayInputStream(
 								packet);
-						ObjectInputStream oos = new ObjectInputStream(baos);
+						oos = new ObjectInputStream(baos);
 						DataObject inObject = (DataObject) oos.readObject();
 
 						System.out.println("YOU HAVE A MESSAGE");
@@ -212,6 +238,9 @@ public class NetService extends Service {
 						e.printStackTrace();
 					}
 				}
+				
+				oos.close();
+				
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -246,37 +275,54 @@ public class NetService extends Service {
 				NetworkInfo ni = NetworkInfo.getInstance();
 
 				if (!inObject.getOrginAddress().equalsIgnoreCase(ni.getMyIP())) {
+					
 					switch (inObject.getMessageType()) {
 					case Constants.JOIN:
-
+						
+						String highIP = "";
+						
 						if (ni.network.size() > 0) {
-							DataObject outObject = new DataObject();
-							outObject.setDestinationAddress(inObject
-									.getOrginAddress());
-							outObject.setOrginAddress(ni.getMyIP());
-							outObject.setMessageType(Constants.JOIN_ACK);
-							outObject.setMessage("192.168.0.13");
-							sendMessage(outObject);
-							ni.network.add("192.168.0.13");
+							highIP = "192.168.0.13";
 						}
+						else
+						{
+							Collections.sort(ni.network);
+							highIP = ni.network.get(ni.network.size()-1);
+							
+							String[] ipComps = highIP.split(".");
+							ipComps[ipComps.length-1] = "" + (Integer.parseInt(ipComps[ipComps.length-1])+1);
+							highIP = "";
+							for (int i=0; i<ipComps.length; i++)
+								highIP+=ipComps[i];		
+						}
+						
+						System.out.println(highIP);
+						
+						DataObject outObject = new DataObject();
+						outObject.setDestinationAddress(inObject
+								.getOrginAddress());
+						outObject.setOrginAddress(ni.getMyIP());
+						outObject.setMessageType(Constants.JOIN_ACK);
+						outObject.setMessage(highIP);
+						sendMessage(outObject);
+						ni.network.add(highIP);	
+						
 						break;
 					case Constants.JOIN_ACK:
-
+						
 						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getMessage());
 						ni.network.add(inObject.getOrginAddress());
 						String ip = "";
 
-						if (!(ni.getMyIP().equalsIgnoreCase(inObject.getMessage()))) 
-						{
-							ip = inObject.getMessage();
-							ni.setMyIP(inObject.getMessage());
-						}
-						Handler netHandler = AppInfo.getInstance()
-								.getNetworkHandler();
-
+						ip = inObject.getMessage();
+						ni.setMyIP(inObject.getMessage());
+						device.changeIP(inObject.getMessage());
+						
+						Handler netHandler = AppInfo.getInstance().getNetworkHandler();
 						if (netHandler != null)
 							netHandler.obtainMessage(2, -1, -1, ip).sendToTarget();
-
+					
+						
 						break;
 					case Constants.ALERT:
 						if (ni.conversations.containsKey(orginIP)) {
@@ -335,6 +381,7 @@ public class NetService extends Service {
 						device.connectDevice();
 						ni.setDeviceInitiated(true);
 					}
+					
 
 					NetworkThread.sleep(5000); // (80000);
 
@@ -351,7 +398,7 @@ public class NetService extends Service {
 
 						startDaemon();
 						
-						NetworkThread.sleep(1000);
+						NetworkThread.sleep(6000);      
 						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);

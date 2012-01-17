@@ -40,8 +40,8 @@ public class SendMessageActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sendmessage);
         sendB = (Button)this.findViewById(R.id.SendB);
-        address = (TextView)this.findViewById(R.id.Address);
-        address.append("EVERYONE");
+       // address = (TextView)this.findViewById(R.id.Address);
+       // address.append("EVERYONE");
         message = (EditText)this.findViewById(R.id.Message);
         //globalB = (Button)this.findViewById(R.id.GlobalB);
                    

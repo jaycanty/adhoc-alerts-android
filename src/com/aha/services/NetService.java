@@ -259,12 +259,12 @@ public class NetService extends Service {
 	private class MessageHandler extends Thread {
 
 		DataObject inObject;
-		NetworkInfo ni;
+		//NetworkInfo ni;
 
 		public MessageHandler(DataObject dataObject) {
 
 			this.inObject = dataObject;
-			ni = NetworkInfo.getInstance();
+			//ni = NetworkInfo.getInstance();
 
 		}
 

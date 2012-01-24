@@ -108,16 +108,20 @@ public class NetService extends Service {
 		
 		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
 		
+		String ip = ni.getInitIP();
+		
 		if (netHandler != null)
-			netHandler.obtainMessage(2, -1, -1, "").sendToTarget();		
-
+		{
+			netHandler.obtainMessage(2, -1, -1, ip).sendToTarget();		
+		}
 		if (alertsHandler != null)
 			alertsHandler.obtainMessage(3, -1, -1, "")
 					.sendToTarget();
 		
 		if (convoHandler != null)
 			convoHandler.obtainMessage(3, -1, -1, "")
-					.sendToTarget();		
+					.sendToTarget();
+		
 		
 		// device.getStatus();
 
@@ -259,6 +263,7 @@ public class NetService extends Service {
 	private class MessageHandler extends Thread {
 
 		DataObject inObject;
+		Handler netHandler;
 		//NetworkInfo ni;
 
 		public MessageHandler(DataObject dataObject) {
@@ -281,7 +286,7 @@ public class NetService extends Service {
 						
 						String highIP = "";
 						
-						if (ni.network.size() > 0) {
+						if (ni.network.size() == 0 || ni.network == null) {
 							highIP = "192.168.0.13";
 						}
 						else
@@ -307,6 +312,10 @@ public class NetService extends Service {
 						sendMessage(outObject);
 						ni.network.add(highIP);	
 						
+						netHandler = AppInfo.getInstance().getNetworkHandler();
+						if (netHandler != null)
+							netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 						
+						
 						break;
 					case Constants.JOIN_ACK:
 						
@@ -318,9 +327,9 @@ public class NetService extends Service {
 						ni.setMyIP(inObject.getMessage());
 						device.changeIP(inObject.getMessage());
 						
-						Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+						netHandler = AppInfo.getInstance().getNetworkHandler();
 						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, ip).sendToTarget();
+							netHandler.obtainMessage(2, -1, -1, ip).sendToTarget(); 
 					
 						
 						break;
@@ -398,7 +407,8 @@ public class NetService extends Service {
 
 						startDaemon();
 						
-						NetworkThread.sleep(6000);      
+						NetworkThread.sleep(7000);      
+						
 						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);

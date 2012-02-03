@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.aha.models.Constants;
 import com.aha.models.NetworkInfo;
 
 
@@ -38,7 +39,7 @@ public class Device {
 	public void connectDevice() {
 		String model = Build.MODEL;		
 		device = (Integer)deviceMap.get(model).intValue();		
-		String ip = NetworkInfo.getInstance().getMyIP();
+		int ip = NetworkInfo.getInstance().getMyIP();
 		
         switch (device) {	    	        
 	        case DROID2: 
@@ -122,7 +123,7 @@ public class Device {
 		} 		
 	}	
 	
-	public void initDroid(String ip) {		
+	public void initDroid(int ip) {		
 
 		try {
 			
@@ -132,7 +133,7 @@ public class Device {
 			
 			Process ps = Runtime.getRuntime().exec("su");
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
-			out.writeBytes("sh /data/jay/connect.sh " + ip + "\n");
+			out.writeBytes("sh /data/jay/connect.sh " + Constants.BASE_ADDRESS + ip + "\n");
 			out.writeBytes("exit\n");
 			out.flush();
 			
@@ -207,14 +208,14 @@ public class Device {
 		
 	}
 
-	public void initNexus(String ip) {		
+	public void initNexus(int ip) {		
 
 		try {
 			Process ps = Runtime.getRuntime().exec("su");
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
 			out.writeBytes("insmod /system/lib/modules/bcm4329.ko\n");
 			out.writeBytes("sleep 5\n");
-			out.writeBytes("ifconfig eth0 " + ip + " netmask 255.255.255.0\n");
+			out.writeBytes("ifconfig eth0 " + Constants.BASE_ADDRESS + ip + " netmask 255.255.255.0\n");
 			out.writeBytes("ifconfig eth0 up\n");
 			out.writeBytes("./data/data/android.tether/bin/iwconfig eth0 mode ad-hoc\n");
 			out.writeBytes("./data/data/android.tether/bin/iwconfig eth0 essid hope\n");
@@ -249,7 +250,7 @@ public class Device {
 		} 
 	}	
 	
-	public void initEris(String ip) {		
+	public void initEris(int ip) {		
 
 		try {
 			Process ps = Runtime.getRuntime().exec("su");
@@ -258,7 +259,7 @@ public class Device {
 			out.writeBytes("sleep 5\n");
 			out.writeBytes("wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e /proc/calibration -i /system/etc/wifi/tiwlan.ini\n");
 			out.writeBytes("sleep 2\n");
-			out.writeBytes("ifconfig tiwlan0 " + ip + " netmask 255.255.255.0 up\n");
+			out.writeBytes("ifconfig tiwlan0 " + Constants.BASE_ADDRESS + ip + " netmask 255.255.255.0 up\n");
 			out.writeBytes("exit\n");
 			out.flush();
 		

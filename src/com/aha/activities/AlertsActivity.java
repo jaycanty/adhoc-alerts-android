@@ -188,11 +188,11 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     {
         conversationArray.clear();
         NetworkInfo ni = NetworkInfo.getInstance();
-        Set<String> s = ni.conversations.keySet();
-        Iterator<String> iterator = s.iterator();
+        Set<Integer> s = ni.conversations.keySet();
+        Iterator<Integer> iterator = s.iterator();
         while (iterator.hasNext())
         {
-            String originIP = iterator.next();
+            int originIP = iterator.next();
         	int count = ni.conversations.get(originIP).size();
         	conversationArray.add(originIP + " : " + count);
         }    	

@@ -6,8 +6,8 @@ public class DataObject implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private int messageType;
-	private String destinationAddress;
-	private String orginAddress;
+	private int destinationAddress;
+	private int orginAddress;
 	private String message;
 
 	
@@ -19,19 +19,19 @@ public class DataObject implements Serializable {
 		this.messageType = messageType;
 	}
 
-	public String getDestinationAddress() {
+	public int getDestinationAddress() {
 		return destinationAddress;
 	}
 
-	public void setDestinationAddress(String destinationAddress) {
+	public void setDestinationAddress(int destinationAddress) {
 		this.destinationAddress = destinationAddress;
 	}
 
-	public String getOrginAddress() {
+	public int getOrginAddress() {
 		return orginAddress;
 	}
 
-	public void setOrginAddress(String orginAddress) {
+	public void setOrginAddress(int orginAddress) {
 		this.orginAddress = orginAddress;
 	}
 

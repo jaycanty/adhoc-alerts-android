@@ -108,7 +108,7 @@ public class NetService extends Service {
 		
 		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
 		
-		String ip = ni.getInitIP();
+		int ip = ni.getInitIP();
 		
 		if (netHandler != null)
 		{
@@ -166,7 +166,7 @@ public class NetService extends Service {
 
 			DatagramPacket sendPacket;
 			sendPacket = new DatagramPacket(packet, packet.length,
-					InetAddress.getByName(dataObject.getDestinationAddress()),
+					InetAddress.getByName( Constants.BASE_ADDRESS + dataObject.getDestinationAddress()),
 					11111);
 
 			outSocket.send(sendPacket);
@@ -275,30 +275,25 @@ public class NetService extends Service {
 
 		public void run() {
 			try {
-				String orginIP = inObject.getOrginAddress();
+				int orginIP = inObject.getOrginAddress();
 
 				NetworkInfo ni = NetworkInfo.getInstance();
 
-				if (!inObject.getOrginAddress().equalsIgnoreCase(ni.getMyIP())) {
+				if (inObject.getOrginAddress() != ni.getMyIP()) {
 					
 					switch (inObject.getMessageType()) {
 					case Constants.JOIN:
 						
-						String highIP = "";
+						int highIP = 0;
 						
 						if (ni.network.size() == 0 || ni.network == null) {
-							highIP = "192.168.0.13";
+							highIP = 13;
 						}
 						else
 						{
 							Collections.sort(ni.network);
-							highIP = ni.network.get(ni.network.size()-1);
-							
-							String[] ipComps = highIP.split(".");
-							ipComps[ipComps.length-1] = "" + (Integer.parseInt(ipComps[ipComps.length-1])+1);
-							highIP = "";
-							for (int i=0; i<ipComps.length; i++)
-								highIP+=ipComps[i];		
+							highIP = ni.network.get(ni.network.size()-1) + 1;
+	
 						}
 						
 						System.out.println(highIP);
@@ -308,7 +303,7 @@ public class NetService extends Service {
 								.getOrginAddress());
 						outObject.setOrginAddress(ni.getMyIP());
 						outObject.setMessageType(Constants.JOIN_ACK);
-						outObject.setMessage(highIP);
+						outObject.setMessage( "" + highIP);
 						sendMessage(outObject);
 						ni.network.add(highIP);	
 						
@@ -324,7 +319,7 @@ public class NetService extends Service {
 						String ip = "";
 
 						ip = inObject.getMessage();
-						ni.setMyIP(inObject.getMessage());
+						ni.setMyIP(new Integer(inObject.getMessage()));
 						device.changeIP(inObject.getMessage());
 						
 						netHandler = AppInfo.getInstance().getNetworkHandler();

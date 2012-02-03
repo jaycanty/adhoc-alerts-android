@@ -37,7 +37,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
-    String orginIP;
+    int orginIP;
     Handler handler;
     
 	Button sendB;
@@ -89,7 +89,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
 						} else {
 							Vector<DataObject> v = new Vector<DataObject>();
 							v.add(dataObject);
-							ni.conversations.put(orginIP, v);
+							ni.conversations.put(new Integer(orginIP), v);
 						}    	    			
        	    			loadList();
 
@@ -109,7 +109,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
         // Bind to LocalService        
         try
         {
-        	orginIP = getIntent().getExtras().getString("originIP");
+        	orginIP = getIntent().getExtras().getInt("originIP");
         	// bind to service
         	Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -202,7 +202,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
         {
 	        for (int i=0; i<v.size(); i++) {
 	        	
-	        	if (v.get(i).getOrginAddress().equalsIgnoreCase(ni.getMyIP()))
+	        	if (v.get(i).getOrginAddress() == ni.getMyIP())
 	        		conversationArray.add("ME: " + v.get(i).getMessage());
 	        	else
 	        		conversationArray.add(v.get(i).getOrginAddress() + ": " + v.get(i).getMessage());

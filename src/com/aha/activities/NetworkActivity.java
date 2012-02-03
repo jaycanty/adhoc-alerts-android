@@ -53,7 +53,7 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
-    private ArrayAdapter<String> networkArray;
+    private ArrayAdapter<Integer> networkArray;
     ListView lv;
     Handler handler;
     
@@ -69,13 +69,10 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
         localB.setOnClickListener(this);
         globalB.setOnClickListener(this);
         
-       networkArray = new ArrayAdapter<String>(this, R.layout.message);
+       networkArray = new ArrayAdapter<Integer>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
        lv.setAdapter(networkArray); 
        lv.setOnItemClickListener(this);
-       
-       for (int i=0; i<20; i++)
-    	   networkArray.add("user9: 192.168.0.3");
        
        ipTV.setText(NetworkInfo.getInstance().getInitIP());
        

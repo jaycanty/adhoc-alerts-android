@@ -12,6 +12,7 @@ import com.aha.R;
 import android.widget.ArrayAdapter;
 
 import com.aha.models.AppInfo;
+import com.aha.models.Constants;
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
@@ -74,7 +75,7 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
        lv.setAdapter(networkArray); 
        lv.setOnItemClickListener(this);
        
-       ipTV.setText(NetworkInfo.getInstance().getInitIP());
+       ipTV.setText(Constants.BASE_ADDRESS + NetworkInfo.getInstance().getInitIP());
        
     }
     
@@ -178,7 +179,7 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
 	    	            case 2:
 	        	            String ip = (String) msg.obj;
 	        	            if (ip.length() > 0)
-	        	            	ipTV.setText(ip);
+	        	            	ipTV.setText(Constants.BASE_ADDRESS + ip);
 	        	            
 	        	            loadList();	     	            
 	        	        break;
@@ -193,8 +194,6 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
             
 	        ai.setNetworkContext(NetworkActivity.this);
 	        ai.setNetworkHandler(handler);             
-            
-            
         }
 
         //@Override

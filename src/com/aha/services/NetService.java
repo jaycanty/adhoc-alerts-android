@@ -292,7 +292,7 @@ public class NetService extends Service {
 						else
 						{
 							Collections.sort(ni.network);
-							highIP = ni.network.get(ni.network.size()-1) + 1;
+							highIP = ni.network.get(ni.network.size()-1).intValue() + 1;
 	
 						}
 						
@@ -303,7 +303,7 @@ public class NetService extends Service {
 								.getOrginAddress());
 						outObject.setOrginAddress(ni.getMyIP());
 						outObject.setMessageType(Constants.JOIN_ACK);
-						outObject.setMessage( "" + highIP);
+						outObject.setReassignAddress(highIP);
 						sendMessage(outObject);
 						ni.network.add(highIP);	
 						
@@ -316,15 +316,15 @@ public class NetService extends Service {
 						
 						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getMessage());
 						ni.network.add(inObject.getOrginAddress());
-						String ip = "";
+						int ip = 0;
 
-						ip = inObject.getMessage();
-						ni.setMyIP(new Integer(inObject.getMessage()));
-						device.changeIP(Integer.parseInt(inObject.getMessage()));
+						ip = inObject.getReassignAddress();
+						ni.setMyIP(ip);
+						device.changeIP(ip);
 						
 						netHandler = AppInfo.getInstance().getNetworkHandler();
 						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, ip).sendToTarget(); 
+							netHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
 					
 						
 						break;

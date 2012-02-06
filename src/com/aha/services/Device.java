@@ -95,7 +95,7 @@ public class Device {
 		int device = (Integer)deviceMap.get(model).intValue();	
 		
 		String ip = Constants.BASE_ADDRESS + ipint;
-		//System.out.println("" + device + " " + model);
+		System.out.println("IP: :::::::::::::: " + ip);
 		
 		try {
 			

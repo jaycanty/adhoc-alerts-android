@@ -90,9 +90,11 @@ public class Device {
 		return status;
 	}
 	
-	public void changeIP (String ip) {
+	public void changeIP (int ipint) {
 		String model = Build.MODEL;		
-		int device = (Integer)deviceMap.get(model).intValue();		
+		int device = (Integer)deviceMap.get(model).intValue();	
+		
+		String ip = Constants.BASE_ADDRESS + ipint;
 		//System.out.println("" + device + " " + model);
 		
 		try {
@@ -256,7 +258,7 @@ public class Device {
 			Process ps = Runtime.getRuntime().exec("su");
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
 			out.writeBytes("insmod /system/lib/modules/wlan.ko\n");
-			out.writeBytes("sleep 5\n");
+			out.writeBytes("sleep 8\n");
 			out.writeBytes("wlan_loader -f /system/etc/wifi/Fw1251r1c.bin -e /proc/calibration -i /system/etc/wifi/tiwlan.ini\n");
 			out.writeBytes("sleep 2\n");
 			out.writeBytes("ifconfig tiwlan0 " + Constants.BASE_ADDRESS + ip + " netmask 255.255.255.0 up\n");

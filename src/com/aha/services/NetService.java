@@ -112,7 +112,7 @@ public class NetService extends Service {
 		
 		if (netHandler != null)
 		{
-			netHandler.obtainMessage(2, -1, -1, ip).sendToTarget();		
+			netHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget();		
 		}
 		if (alertsHandler != null)
 			alertsHandler.obtainMessage(3, -1, -1, "")
@@ -320,7 +320,7 @@ public class NetService extends Service {
 
 						ip = inObject.getMessage();
 						ni.setMyIP(new Integer(inObject.getMessage()));
-						device.changeIP(inObject.getMessage());
+						device.changeIP(Integer.parseInt(inObject.getMessage()));
 						
 						netHandler = AppInfo.getInstance().getNetworkHandler();
 						if (netHandler != null)

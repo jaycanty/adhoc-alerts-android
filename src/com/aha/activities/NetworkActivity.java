@@ -179,7 +179,7 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
 	    	            case 2:
 	        	            String ip = (String) msg.obj;
 	        	            if (ip.length() > 0)
-	        	            	ipTV.setText(Constants.BASE_ADDRESS + ip);
+	        	            	ipTV.setText(ip);
 	        	            
 	        	            loadList();	     	            
 	        	        break;

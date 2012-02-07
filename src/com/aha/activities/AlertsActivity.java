@@ -75,7 +75,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     		
     	  String s = (String)((TextView) view).getText();
     	  String[] sa = s.split(" : ");
-    	  String orginIP = sa[0];
+    	  int orginIP = Integer.parseInt(sa[0]);
     	  
           Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
           intent.putExtra("originIP", orginIP);
@@ -194,7 +194,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         {
             int originIP = iterator.next();
         	int count = ni.conversations.get(originIP).size();
-        	conversationArray.add(originIP + " : " + count);
+        	conversationArray.add("" + originIP + " : " + count);
         }    	
     	
     }

@@ -205,7 +205,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
 	        	if (v.get(i).getOrginAddress() == ni.getMyIP())
 	        		conversationArray.add("ME: " + v.get(i).getMessage());
 	        	else
-	        		conversationArray.add(v.get(i).getOrginAddress() + ": " + v.get(i).getMessage());
+	        		conversationArray.add("" + v.get(i).getOrginAddress() + ": " + v.get(i).getMessage());
 	        }   
         }
     	

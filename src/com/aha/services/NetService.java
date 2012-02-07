@@ -386,8 +386,7 @@ public class NetService extends Service {
 						ni.setDeviceInitiated(true);
 					}
 					
-
-					NetworkThread.sleep(5000); // (80000);
+					NetworkThread.sleep(8500); // (80000);
 
 					if (!device.doesNetworkExist()) {
 						device.disconnectDevice();
@@ -395,15 +394,15 @@ public class NetService extends Service {
 						//		"There is no network available at this time")
 						//		.sendToTarget();
 					} else {
+						
 						ni.setNetworkUp(device.doesNetworkExist());
 
 						//handler.obtainMessage(3, -1, -1, "The network is up")
 						//		.sendToTarget();
-
+						
 						startDaemon();
-						
+					
 						NetworkThread.sleep(7000);      
-						
 						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);

@@ -432,6 +432,7 @@ public class NetService extends Service {
 							// for eris type, which can continue to 
 							if (device.deviceCanAdvertiseNetwork())
 							{
+								ni.setMyIP(11);
 								device.changeIP(11);
 								
 								handler.obtainMessage(3, -1, -1,

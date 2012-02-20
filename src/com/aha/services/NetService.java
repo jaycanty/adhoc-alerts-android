@@ -430,15 +430,30 @@ public class NetService extends Service {
 							//device specific if first to join
 
 							// for eris type, which can continue to 
-							device.changeIP(11);
-							
-							handler.obtainMessage(3, -1, -1,
-							"There is no network available at this time")
-							.sendToTarget();
-							
-							handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + "11").sendToTarget(); 
-							//netOff();
-							
+							if (device.deviceCanAdvertiseNetwork())
+							{
+								device.changeIP(11);
+								
+								handler.obtainMessage(3, -1, -1,
+								"There are no other devices available, you are advertising the network")
+								.sendToTarget();
+								
+								handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + "11").sendToTarget(); 	
+								
+							} else {
+
+								device.changeIP(11);
+								
+								handler.obtainMessage(3, -1, -1,
+								"There are no other devices available, you are advertising the network for 1 minute")
+								.sendToTarget();
+								
+								handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + "11").sendToTarget(); 	
+								
+								NetworkThread.sleep(50000);
+								
+								netOff();
+							}							
 						}		
 					}
 

@@ -146,6 +146,25 @@ public class Device {
 	}	
 	
 	
+	public synchronized boolean deviceCanAdvertiseNetwork() {
+		String model = Build.MODEL;		
+		device = (Integer)deviceMap.get(model).intValue();		
+		boolean sleep = false;
+		
+        switch (device) {	    	        
+
+	        case NEXUSONE: 
+	        	sleep = true;
+		        break; 
+	        case ERIS: 
+	        	sleep = true;
+		        break;     
+        }	
+        
+        return sleep; 
+	}		
+	
+	
 	public void initDroid(int ip) {		
 
 		try {

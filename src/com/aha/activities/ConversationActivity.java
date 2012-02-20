@@ -84,7 +84,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	    			
 						if (ni.conversations.containsKey(orginIP)) {
 							Vector<DataObject> v = ni.conversations
-									.get(orginIP);
+									.get(new Integer(orginIP));
 							v.add(dataObject);
 						} else {
 							Vector<DataObject> v = new Vector<DataObject>();
@@ -92,6 +92,8 @@ public class ConversationActivity extends Activity implements OnClickListener {
 							ni.conversations.put(new Integer(orginIP), v);
 						}    	    			
        	    			loadList();
+       	    			
+       	    			
 
     	        		mService.sendMessage(dataObject);
     	        		et.setText("");
@@ -112,7 +114,6 @@ public class ConversationActivity extends Activity implements OnClickListener {
         	orginIP = getIntent().getExtras().getInt("originIP");
         	
         	System.out.println("ORIGIN IP: " + orginIP);
-        	
         	
         	// bind to service
         	Intent intent = new Intent(this, NetService.class);

@@ -17,6 +17,7 @@ public class NetworkInfo {
 	private boolean networkUp;
 	private boolean deviceInitiated;
 	private boolean joined;
+	private boolean acknowledged = false;
 	
 	private int myIP;
 
@@ -88,6 +89,14 @@ public class NetworkInfo {
 
 	public void setJoined(boolean joined) {
 		this.joined = joined;
+	}	
+	
+	public synchronized boolean isAcknowledged() {
+		return acknowledged;
+	}
+
+	public synchronized void setAcknowledged(boolean acknowledged) {
+		this.acknowledged = acknowledged;
 	}	
 
 }

@@ -41,7 +41,6 @@ public class NetService extends Service {
 	private DatagramSocket outSocket;
 	private ReceiveMessageThread rmt;
 	private NetworkThread nt;
-	private boolean acknowledged = false;
 
 	@Override
 	public void onCreate() {
@@ -69,14 +68,6 @@ public class NetService extends Service {
 
 		return wfInfo.toString();
 
-	}
-
-	public synchronized boolean isAcknowledged() {
-		return acknowledged;
-	}
-
-	public synchronized void setAcknowledged(boolean acknowledged) {
-		this.acknowledged = acknowledged;
 	}
 
 	public String enableWifi() {
@@ -108,6 +99,7 @@ public class NetService extends Service {
 		ni.setDeviceInitiated(false);
 		ni.setNetworkUp(false);
 		ni.setJoined(false);
+		ni.setAcknowledged(false);
 		ni.network.clear();
 		ni.conversations.clear();
 		
@@ -149,6 +141,11 @@ public class NetService extends Service {
 	public synchronized String sendMessage(DataObject dataObject) {
 
 		try {
+			
+			System.out.println("OIP: " + dataObject.getOrginAddress());
+			System.out.println("DIP: " + dataObject.getDestinationAddress());			
+			
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(baos);
 			oos.writeObject(dataObject);
@@ -325,7 +322,7 @@ public class NetService extends Service {
 						
 						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getOrginAddress());
 						
-						setAcknowledged(true);
+						ni.setAcknowledged(true);
 						
 						ni.network.add(inObject.getOrginAddress());
 						int ip = 0;
@@ -350,6 +347,8 @@ public class NetService extends Service {
 							v.add(inObject);
 							ni.conversations.put(orginIP, v);
 						}
+						
+						
 
 						Handler alertsHandler = AppInfo.getInstance()
 								.getAlertsHandler();
@@ -420,14 +419,19 @@ public class NetService extends Service {
 						NetworkThread.sleep(5000);
 						
 						Handler handler = AppInfo.getInstance().getNetworkHandler();
-						
+/*						
 						
 						if (isAcknowledged())
 						{
 							handler.obtainMessage(3, -1, -1, "The network is up")
 									.sendToTarget();							
 						}
-						else { 	
+*/						
+						
+						
+						
+						//else 
+						if (!ni.isAcknowledged()) { 	
 							//device specific if first to join
 
 							// for eris type, which can continue to 

@@ -41,6 +41,7 @@ public class NetService extends Service {
 	private DatagramSocket outSocket;
 	private ReceiveMessageThread rmt;
 	private NetworkThread nt;
+	private boolean acknowledged = false;
 
 	@Override
 	public void onCreate() {
@@ -68,6 +69,14 @@ public class NetService extends Service {
 
 		return wfInfo.toString();
 
+	}
+
+	public synchronized boolean isAcknowledged() {
+		return acknowledged;
+	}
+
+	public synchronized void setAcknowledged(boolean acknowledged) {
+		this.acknowledged = acknowledged;
 	}
 
 	public String enableWifi() {
@@ -315,6 +324,9 @@ public class NetService extends Service {
 					case Constants.JOIN_ACK:
 						
 						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getMessage());
+						
+						setAcknowledged(true);
+						
 						ni.network.add(inObject.getOrginAddress());
 						int ip = 0;
 
@@ -386,19 +398,14 @@ public class NetService extends Service {
 						ni.setDeviceInitiated(true);
 					}
 					
-					NetworkThread.sleep(8500); // (80000);
+					NetworkThread.sleep(device.getDeviceSleep()); // (80000);
 
 					if (!device.doesNetworkExist()) {
 						device.disconnectDevice();
-						//handler.obtainMessage(3, -1, -1,
-						//		"There is no network available at this time")
-						//		.sendToTarget();
+
 					} else {
 						
 						ni.setNetworkUp(device.doesNetworkExist());
-
-						//handler.obtainMessage(3, -1, -1, "The network is up")
-						//		.sendToTarget();
 						
 						startDaemon();
 					
@@ -408,8 +415,31 @@ public class NetService extends Service {
 						dataObject.setDestinationAddress(Constants.BROADCAST);
 						dataObject.setOrginAddress(ni.getMyIP());
 						dataObject.setMessageType(Constants.JOIN);
-						sendMessage(dataObject);		
-										
+						sendMessage(dataObject);	
+
+						NetworkThread.sleep(5000);
+						
+						Handler handler = AppInfo.getInstance().getNetworkHandler();
+						
+						if (isAcknowledged())
+						{
+							handler.obtainMessage(3, -1, -1, "The network is up")
+									.sendToTarget();							
+						}
+						else { 	
+							//device specific if first to join
+
+							// for eris type, which can continue to 
+							device.changeIP(11);
+							
+							handler.obtainMessage(3, -1, -1,
+							"There is no network available at this time")
+							.sendToTarget();
+							
+							handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + "11").sendToTarget(); 
+							//netOff();
+							
+						}		
 					}
 
 

@@ -125,6 +125,27 @@ public class Device {
 		} 		
 	}	
 	
+	public synchronized int getDeviceSleep() {
+		String model = Build.MODEL;		
+		device = (Integer)deviceMap.get(model).intValue();		
+		int sleep = 0;
+		
+        switch (device) {	    	        
+	        case DROID2: 
+	        	sleep = 6000;
+		        break; 
+	        case NEXUSONE: 
+	        	sleep = 6000;
+		        break; 
+	        case ERIS: 
+	        	sleep = 8000;
+		        break;     
+        }	
+        
+        return sleep; 
+	}	
+	
+	
 	public void initDroid(int ip) {		
 
 		try {
@@ -137,9 +158,7 @@ public class Device {
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
 			out.writeBytes("sh /data/jay/connect.sh " + Constants.BASE_ADDRESS + ip + "\n");
 			out.writeBytes("exit\n");
-			out.flush();
-			
-			
+			out.flush();			
 			
 			
 		} catch (IOException e) {

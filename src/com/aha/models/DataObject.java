@@ -10,6 +10,7 @@ public class DataObject implements Serializable {
 	private int orginAddress;
 	private int reassignAddress;
 	private String message;
+	
 
 	
 	public int getMessageType() {

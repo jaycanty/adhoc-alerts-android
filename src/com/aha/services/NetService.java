@@ -323,7 +323,7 @@ public class NetService extends Service {
 						break;
 					case Constants.JOIN_ACK:
 						
-						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getMessage());
+						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getOrginAddress());
 						
 						setAcknowledged(true);
 						
@@ -420,6 +420,7 @@ public class NetService extends Service {
 						NetworkThread.sleep(5000);
 						
 						Handler handler = AppInfo.getInstance().getNetworkHandler();
+						
 						
 						if (isAcknowledged())
 						{

@@ -82,8 +82,8 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
     public void onItemClick(AdapterView<?> parent, View view,
             int position, long id) {
     		    	
-    	  String orginIP = (String)((TextView) view).getText();
-    	  
+    	  int orginIP = Integer.parseInt( (String)((TextView) view).getText() ); //(String)((TextView) view).getText();
+  
           Intent intent = new Intent(NetworkActivity.this, ConversationActivity.class);
           intent.putExtra("originIP", orginIP);
           startActivity(intent);           

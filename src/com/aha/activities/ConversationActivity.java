@@ -110,6 +110,10 @@ public class ConversationActivity extends Activity implements OnClickListener {
         try
         {
         	orginIP = getIntent().getExtras().getInt("originIP");
+        	
+        	System.out.println("ORIGIN IP: " + orginIP);
+        	
+        	
         	// bind to service
         	Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);

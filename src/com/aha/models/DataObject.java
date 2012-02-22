@@ -10,6 +10,8 @@ public class DataObject implements Serializable {
 	private int destinationAddress;
 	private int orginAddress;
 	private int reassignAddress;
+	private int localRank;
+	private int globalRank;
 	private String message;
 	
 	private Vector<NetworkNode> hubList;
@@ -44,6 +46,22 @@ public class DataObject implements Serializable {
 
 	public void setReassignAddress(int reassignAddress) {
 		this.reassignAddress = reassignAddress;
+	}
+
+	public int getLocalRank() {
+		return localRank;
+	}
+
+	public void setLocalRank(int localRank) {
+		this.localRank = localRank;
+	}
+
+	public int getGlobalRank() {
+		return globalRank;
+	}
+
+	public void setGlobalRank(int globalRank) {
+		this.globalRank = globalRank;
 	}
 
 	public String getMessage() {

@@ -26,7 +26,7 @@ public class NetworkInfo {
 	
 	public HashMap<Integer, Vector<DataObject>> conversations;
 	//public HashMap<String, String> network;
-	public Vector<Integer> network;
+	public Vector<NetworkNode> network;
 	public Vector<Integer> myNetwork;
 	private int[] initIPList = {1,2,3,4,5,6,7,8,9,10};
 	
@@ -37,7 +37,7 @@ public class NetworkInfo {
 		joined = false;
 		conversations = new HashMap<Integer, Vector<DataObject>>(); //(HashMap<String, Vector<DataObject>>)Collections.synchronizedMap(new HashMap<String, Vector<DataObject>>());
 		//network = new HashMap<String, String>(); //(HashMap<String, String>)Collections.synchronizedMap(new HashMap<String, String>());
-		network = new Vector<Integer>();
+		network = new Vector<NetworkNode>();
 	}	
 	
 	

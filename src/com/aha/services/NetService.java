@@ -18,6 +18,7 @@ import com.aha.models.AppInfo;
 import com.aha.models.Constants;
 import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
+import com.aha.models.NetworkNode;
 
 import android.app.Activity;
 import android.app.Service;
@@ -298,7 +299,7 @@ public class NetService extends Service {
 						else
 						{
 							Collections.sort(ni.network);
-							highIP = ni.network.get(ni.network.size()-1).intValue() + 1;
+							highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
 	
 						}
 						
@@ -311,7 +312,7 @@ public class NetService extends Service {
 						outObject.setMessageType(Constants.JOIN_ACK);
 						outObject.setReassignAddress(highIP);
 						sendMessage(outObject);
-						ni.network.add(highIP);	
+						ni.network.add(new NetworkNode(0,0,highIP));	
 						
 						netHandler = AppInfo.getInstance().getNetworkHandler();
 						if (netHandler != null)
@@ -324,7 +325,7 @@ public class NetService extends Service {
 						
 						ni.setAcknowledged(true);
 						
-						ni.network.add(inObject.getOrginAddress());
+						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
 						int ip = 0;
 
 						ip = inObject.getReassignAddress();

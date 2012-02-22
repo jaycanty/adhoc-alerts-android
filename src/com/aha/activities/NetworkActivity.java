@@ -253,7 +253,7 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
         NetworkInfo ni = NetworkInfo.getInstance();
        
         for (int i=0; i<ni.network.size(); i++) {
-        	networkArray.add(ni.network.get(i));
+        	networkArray.add(ni.network.get(i).getIp());
         }        	
     	
     }	    

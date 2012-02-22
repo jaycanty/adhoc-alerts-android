@@ -1,6 +1,7 @@
 package com.aha.models;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 public class DataObject implements Serializable {
 	
@@ -11,7 +12,7 @@ public class DataObject implements Serializable {
 	private int reassignAddress;
 	private String message;
 	
-
+	private Vector<NetworkNode> hubList;
 	
 	public int getMessageType() {
 		return messageType;
@@ -51,6 +52,14 @@ public class DataObject implements Serializable {
 	
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public Vector<NetworkNode> getHubList() {
+		return hubList;
+	}
+
+	public void setHubList(Vector<NetworkNode> hubList) {
+		this.hubList = hubList;
 	}
 	
 

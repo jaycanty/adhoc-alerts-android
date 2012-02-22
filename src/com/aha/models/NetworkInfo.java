@@ -20,12 +20,14 @@ public class NetworkInfo {
 	private boolean acknowledged = false;
 	
 	private int myIP;
+	
+	//private int GlobalRank;
 
 	
 	public HashMap<Integer, Vector<DataObject>> conversations;
 	//public HashMap<String, String> network;
 	public Vector<Integer> network;
-	
+	public Vector<Integer> myNetwork;
 	private int[] initIPList = {1,2,3,4,5,6,7,8,9,10};
 	
 	protected NetworkInfo(){

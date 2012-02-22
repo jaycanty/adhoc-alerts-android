@@ -454,7 +454,7 @@ public class NetService extends Service {
 								"There are no other devices available, you are advertising the network for 1 minute")
 								.sendToTarget();
 								
-								handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + "11").sendToTarget(); 	
+								handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + Constants.HUB_IP).sendToTarget(); 	
 								
 								NetworkThread.sleep(50000);
 								

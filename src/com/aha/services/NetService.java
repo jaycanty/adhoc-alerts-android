@@ -428,9 +428,7 @@ public class NetService extends Service {
 									.sendToTarget();							
 						}
 */						
-						
-						
-						
+
 						//else 
 						if (!ni.isAcknowledged()) { 	
 							//device specific if first to join

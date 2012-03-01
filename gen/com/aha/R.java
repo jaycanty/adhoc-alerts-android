@@ -17,19 +17,20 @@ public final class R {
         public static final int icon=0x7f020003;
     }
     public static final class id {
-        public static final int Address=0x7f060009;
+        public static final int Address=0x7f06000a;
         public static final int EditText=0x7f060001;
         public static final int GlobalB=0x7f060005;
-        public static final int IPTV=0x7f060006;
+        public static final int IPTV=0x7f060007;
         public static final int ListView=0x7f060000;
         public static final int LocalB=0x7f060004;
-        public static final int Message=0x7f06000a;
+        public static final int Message=0x7f06000b;
         public static final int SendB=0x7f060002;
-        public static final int StatusTV=0x7f060007;
+        public static final int StatusTV=0x7f060008;
         public static final int TextStatus=0x7f060003;
-        public static final int connect=0x7f06000c;
-        public static final int disconnect=0x7f06000b;
-        public static final int linearLayout1=0x7f060008;
+        public static final int TextView=0x7f060006;
+        public static final int connect=0x7f06000d;
+        public static final int disconnect=0x7f06000c;
+        public static final int linearLayout1=0x7f060009;
     }
     public static final class layout {
         public static final int alerts=0x7f030000;

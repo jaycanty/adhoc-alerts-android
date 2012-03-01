@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import com.aha.models.AppInfo;
 import com.aha.models.Constants;
 import com.aha.models.NetworkInfo;
+import com.aha.models.NetworkNode;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
 
@@ -25,11 +26,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -56,45 +59,21 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     Handler handler; 
     
     private ArrayAdapter<String> networkArray;
-
-    
-    ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alerts);
         tv = (TextView)this.findViewById(R.id.TextStatus); 		       
-        
-/*        
-       conversationArray = new ArrayAdapter<String>(this, R.layout.message);
-       lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(conversationArray);
-       lv.setOnItemClickListener(this);
-*/       
-       
+            
        networkArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(networkArray); 
+       lv.setAdapter(new CustomAdapter()); 
        lv.setOnItemClickListener(this);       
         
         
     }
-    
- /*   
-    public void onItemClick(AdapterView<?> parent, View view,
-            int position, long id) {
-    		    	
-    	  int orginIP = Integer.parseInt( (String)((TextView) view).getText() ); //(String)((TextView) view).getText();
-  
-          Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
-          intent.putExtra("originIP", orginIP);
-          startActivity(intent);           
-          
-        }     
-*/    
-    
-    
+        
     public void onItemClick(AdapterView<?> parent, View view,
             int position, long id) {
     		
@@ -164,8 +143,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         inflater.inflate(R.menu.menu, menu);
         return true;
     }  
-    
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -241,6 +219,53 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
 
         }        	    	
     }	
+    
+    
+	private class CustomAdapter extends ArrayAdapter<NetworkNode> {
+	    CustomAdapter() {
+	      super(AlertsActivity.this, R.layout.message, R.id.TextView, NetworkInfo.getInstance().network);
+	    }
+	
+	    @Override
+	    public View getView(int position, View convertView, ViewGroup parent) {     
+	      View row = convertView;
+	
+	      if (row == null) {
+	        // This gives us a View object back which, in reality, is our LinearLayout with 
+	        // an ImageView and a TextView, just as R.layout.row specifies.
+	        LayoutInflater inflater = getLayoutInflater();      
+	        row = inflater.inflate(R.layout.message, parent, false);
+	      }
+	      
+			TextView label = (TextView) row.findViewById(R.id.TextView);
+			
+	        NetworkInfo ni = NetworkInfo.getInstance();
+			int ip = ni.network.get(position).getIp();
+			
+			if(ni.conversations.containsKey(ip))
+			{
+				//networkArray.add( );
+				int count = ni.conversations.get(ip).size();
+				label.setText("" + ip + " : " + count);        		
+				
+			} else
+				label.setText("" + ip + " : -");
+	
+	      return row;       
+	    }
+	  }    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 /*
     private synchronized void loadList()
     {

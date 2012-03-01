@@ -314,7 +314,18 @@ public class NetService extends Service {
 						outObject.setOrginAddress(ni.getMyIP());
 						outObject.setMessageType(Constants.JOIN_ACK);
 						outObject.setReassignAddress(highIP);
-						outObject.setMessage("Welcome to the network!");
+						outObject.setMessage("Hey " + highIP + "welcome to the network!");
+						
+						if (ni.conversations.containsKey(Constants.BROADCAST)) {
+							v = ni.conversations
+									.get(Constants.BROADCAST);
+							v.add(outObject);
+						} else {
+							v = new Vector<DataObject>();
+							v.add(outObject);
+							ni.conversations.put(Constants.BROADCAST, v);
+						}						
+						
 						sendMessage(outObject);
 						ni.network.add(new NetworkNode(0,0,highIP));
 						

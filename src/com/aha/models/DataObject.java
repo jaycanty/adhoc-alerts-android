@@ -9,6 +9,7 @@ public class DataObject implements Serializable {
 	private int messageType;
 	private int destinationAddress;
 	private int orginAddress;
+	private int joinAddress;
 	private int reassignAddress;
 	private int localRank;
 	private int globalRank;
@@ -39,6 +40,14 @@ public class DataObject implements Serializable {
 	public void setOrginAddress(int orginAddress) {
 		this.orginAddress = orginAddress;
 	}
+	
+	public int getJoinAddress() {
+		return joinAddress;
+	}
+
+	public void setJoinAddress(int joinAddress) {
+		this.joinAddress = joinAddress;
+	}	
 
 	public int getReassignAddress() {
 		return reassignAddress;

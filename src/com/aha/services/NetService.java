@@ -317,7 +317,6 @@ public class NetService extends Service {
 						outObject.setMessage("Welcome to the network!");
 						sendMessage(outObject);
 						ni.network.add(new NetworkNode(0,0,highIP));
-						ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
 						
 						if (alertsHandler != null)
 							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
@@ -449,7 +448,7 @@ public class NetService extends Service {
 							
 							ni.setMyIP(11);
 							device.changeIP(11);
-							//ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
+							ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
 							
 							// for eris type, which can continue to 
 							if (device.deviceCanAdvertiseNetwork())
@@ -472,10 +471,7 @@ public class NetService extends Service {
 								
 								netOff();
 							}	
-							
-							
-							
-							
+
 						}		
 					}
 

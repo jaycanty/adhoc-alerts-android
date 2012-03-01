@@ -354,7 +354,7 @@ public class NetService extends Service {
 						
 						if (inObject.getDestinationAddress() == Constants.BROADCAST)
 						{
-							if (ni.conversations.containsKey(orginIP)) {
+							if (ni.conversations.containsKey(Constants.BROADCAST)) {
 								v = ni.conversations
 										.get(Constants.BROADCAST);
 								v.add(inObject);
@@ -411,6 +411,7 @@ public class NetService extends Service {
 
 		}
 
+		
 		public void run() {
 			try {
 				if (!ni.isNetworkUp()) {

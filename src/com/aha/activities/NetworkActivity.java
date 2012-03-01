@@ -40,21 +40,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class NetworkActivity extends Activity implements OnClickListener, OnItemClickListener {
+public class NetworkActivity extends Activity {
 	
 	
-	Button infoB;
-	Button wifiOnB;
-	Button wifiOffB;
-	Button localB;
-	Button staticB;
-	Button globalB;
 	TextView statusTV;
 	TextView ipTV;
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
-    private ArrayAdapter<Integer> networkArray;
     ListView lv;
     Handler handler;
     
@@ -64,55 +57,10 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
         setContentView(R.layout.network);
         statusTV = (TextView)this.findViewById(R.id.StatusTV);
         ipTV = (TextView)this.findViewById(R.id.IPTV);
-        localB = (Button)this.findViewById(R.id.LocalB);
-        globalB = (Button)this.findViewById(R.id.GlobalB);
-                
-        localB.setOnClickListener(this);
-        globalB.setOnClickListener(this);
-        
-       networkArray = new ArrayAdapter<Integer>(this, R.layout.message);
-       lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(networkArray); 
-       lv.setOnItemClickListener(this);
        
        ipTV.setText(Constants.BASE_ADDRESS + NetworkInfo.getInstance().getInitIP());
-       
     }
-    
-    public void onItemClick(AdapterView<?> parent, View view,
-            int position, long id) {
-    		    	
-    	  int orginIP = Integer.parseInt( (String)((TextView) view).getText() ); //(String)((TextView) view).getText();
-  
-          Intent intent = new Intent(NetworkActivity.this, ConversationActivity.class);
-          intent.putExtra("originIP", orginIP);
-          startActivity(intent);           
-          
-        }    
-    
-        
-    public void onClick(View v) {
-        	
-        switch (v.getId()) {	    	        
-            case R.id.LocalB:
-    	        if (mBound) {	    	        	
-    	        	try {
-	        	    	Intent intent = new Intent(NetworkActivity.this, SendMessageActivity.class);
-    	                startActivity(intent); 
-    		        	
-    	    		} catch (Exception e) {
-    	    			e.printStackTrace();
-    	    		}	
-    	        } 
-    	        break;
-            case R.id.GlobalB:
-    	        if (mBound) {
-    	            String msg = mService.getStatus();
-    	            statusTV.setText(msg);
-    	        }
-    	        break;	    	        
-        }	            		        	        
-    }
+           
 
     @Override
     protected void onStart() {
@@ -125,7 +73,6 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	        
-	        loadList();
         } catch (Exception e) {
         	
         	e.printStackTrace();
@@ -180,8 +127,6 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
 	        	            String ip = (String) msg.obj;
 	        	            if (ip.length() > 0)
 	        	            	ipTV.setText(ip);
-	        	            
-	        	            loadList();	     	            
 	        	        break;
                     	case 3:
         	            statusTV.setText((String) msg.obj);	     	            
@@ -246,16 +191,6 @@ public class NetworkActivity extends Activity implements OnClickListener, OnItem
         }
     }    	  
     
-    private synchronized void loadList() 
-    {
-        networkArray.clear();
-               
-        NetworkInfo ni = NetworkInfo.getInstance();
-       
-        for (int i=0; i<ni.network.size(); i++) {
-        	networkArray.add(ni.network.get(i).getIp() );
-        }        	
-    	
-    }	    
+    
 
 }

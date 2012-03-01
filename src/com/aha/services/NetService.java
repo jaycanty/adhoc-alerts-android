@@ -270,9 +270,10 @@ public class NetService extends Service {
 	private class MessageHandler extends Thread {
 
 		DataObject inObject;
-		Handler netHandler;
-		//NetworkInfo ni;
-
+		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
+		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
+		
 		public MessageHandler(DataObject dataObject) {
 
 			this.inObject = dataObject;
@@ -314,9 +315,10 @@ public class NetService extends Service {
 						sendMessage(outObject);
 						ni.network.add(new NetworkNode(0,0,highIP));	
 						
-						netHandler = AppInfo.getInstance().getNetworkHandler();
-						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 						
+						if (alertsHandler != null)
+							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
+						
+						
 						
 						break;
 					case Constants.JOIN_ACK:
@@ -332,29 +334,27 @@ public class NetService extends Service {
 						ni.setMyIP(ip);
 						device.changeIP(ip);
 						
-						netHandler = AppInfo.getInstance().getNetworkHandler();
 						if (netHandler != null)
 							netHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
-					
+						if (alertsHandler != null)
+							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget();					
 						
 						break;
 					case Constants.ALERT:
-						if (ni.conversations.containsKey(orginIP)) {
-							Vector<DataObject> v = ni.conversations
-									.get(orginIP);
-							v.add(inObject);
-						} else {
-							Vector<DataObject> v = new Vector<DataObject>();
-							v.add(inObject);
-							ni.conversations.put(orginIP, v);
+						
+						if (inObject.getDestinationAddress() == Constants.BROADCAST)
+							ni.broadCasts.add(inObject);
+						else {
+							if (ni.conversations.containsKey(orginIP)) {
+								Vector<DataObject> v = ni.conversations
+										.get(orginIP);
+								v.add(inObject);
+							} else {
+								Vector<DataObject> v = new Vector<DataObject>();
+								v.add(inObject);
+								ni.conversations.put(orginIP, v);
+							}							
 						}
-						
-						
-
-						Handler alertsHandler = AppInfo.getInstance()
-								.getAlertsHandler();
-						Handler convoHandler = AppInfo.getInstance()
-								.getConversationHandler();
 
 						if (alertsHandler != null)
 							alertsHandler.obtainMessage(3, -1, -1, "")

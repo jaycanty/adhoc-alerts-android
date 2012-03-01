@@ -3,82 +3,47 @@
   android:orientation="vertical" 
   android:layout_width="fill_parent"
   android:layout_height="fill_parent">
-	
+
+   <TextView android:layout_width="fill_parent"
+     android:layout_height="wrap_content" 
+     android:id="@+id/TextStatus"
+     android:gravity="center_horizontal"
+     android:layout_marginTop="20px"
+     android:text="AD-HOC ALERTS"> 
+   </TextView>	
+	<LinearLayout 
+	  android:orientation="vertical"
+	  android:layout_width="200px"
+	  android:layout_height="fill_parent">	 
+	  
 	   <TextView android:layout_width="fill_parent"
 	     android:layout_height="wrap_content" 
-	     android:id="@+id/TextStatus"
-	     android:gravity="center_horizontal"
-	     android:layout_marginTop="20px"
-	     android:text="AD-HOC ALERTS"> 
-	   </TextView>
-	   
-	   
-	<LinearLayout 
-	  android:orientation="horizontal" 
-	  android:layout_width="wrap_content"
-	  android:layout_marginTop="20px"
-	  android:layout_height="wrap_content">	   
-	   
-	    <ListView android:id="@+id/ListView"
-	        android:layout_width="250px"
-	        android:layout_height="fill_parent"
-	        android:stackFromBottom="true"
-	        android:transcriptMode="alwaysScroll"
-	        android:layout_weight="1"
-	        android:background="#ffffff"
-	    />	
-		<LinearLayout 
-		  android:orientation="vertical"
-		  android:layout_width="200px"
-		  android:layout_height="fill_parent">	 
-		  
-		   <TextView android:layout_width="fill_parent"
-		     android:layout_height="wrap_content" 
-		     android:gravity="right"
-		     android:text="MY IP"> 
-		   </TextView>		  
-		   <TextView android:layout_width="fill_parent"
-		     android:layout_height="wrap_content" 
-		     android:gravity="right"
-		     android:id = "@+id/IPTV"
-		     android:text="-"> 
-		   </TextView>	
-		   <TextView android:layout_width="fill_parent"
-		     android:layout_height="wrap_content" 
-		     android:layout_marginTop="10px" 
-		     android:gravity="right"
-		     android:text="MY HANDLE"> 
-		   </TextView>	
-		   <TextView android:layout_width="fill_parent"
-		     android:layout_height="wrap_content" 
-		     android:gravity="right"
-		     android:text="JAY"> 
-		   </TextView>	
-		   <TextView android:layout_width="fill_parent"
-		   	 android:id="@+id/StatusTV"
-		     android:layout_height="wrap_content" 
-		     android:layout_marginTop="10px" 
-		     android:gravity="right"
-		     android:text="NO NETWORK"> 
-		   </TextView>			   
-		  <Button android:layout_width="fill_parent"
-		    android:layout_height="100px" 
-		    android:layout_marginTop="30px"
-		    android:id="@+id/LocalB"
-		    android:text="BROADCAST">
-		  </Button>			  	  		  	
-		  <Button android:layout_width="fill_parent"
-		    android:layout_height="100px" 
-		    android:layout_marginTop="30px"
-		    android:id="@+id/GlobalB"
-		    android:text="GO GLOBAL">
-		  </Button>			    		  
-		</LinearLayout>  	    
-	    
-	       
-	</LinearLayout>
-
-
-	  	  
-
+	     android:gravity="left"
+	     android:text="MY IP"> 
+	   </TextView>		  
+	   <TextView android:layout_width="fill_parent"
+	     android:layout_height="wrap_content" 
+	     android:gravity="left"
+	     android:id = "@+id/IPTV"
+	     android:text="-"> 
+	   </TextView>	
+	   <TextView android:layout_width="fill_parent"
+	     android:layout_height="wrap_content" 
+	     android:layout_marginTop="10px" 
+	     android:gravity="left"
+	     android:text="MY HANDLE"> 
+	   </TextView>	
+	   <TextView android:layout_width="fill_parent"
+	     android:layout_height="wrap_content" 
+	     android:gravity="left"
+	     android:text="JAY"> 
+	   </TextView>	
+	   <TextView android:layout_width="fill_parent"
+	   	 android:id="@+id/StatusTV"
+	     android:layout_height="wrap_content" 
+	     android:layout_marginTop="10px" 
+	     android:gravity="left"
+	     android:text="NO NETWORK"> 
+	   </TextView>			   		    		  
+	</LinearLayout>  	    
 </LinearLayout>

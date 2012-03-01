@@ -9,6 +9,7 @@ import com.aha.R;
 import android.widget.ArrayAdapter;
 
 import com.aha.models.AppInfo;
+import com.aha.models.Constants;
 import com.aha.models.NetworkInfo;
 import com.aha.services.NetService;
 import com.aha.services.NetService.LocalBinder;
@@ -50,9 +51,13 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     NetService mService;
     AlertDialog alert;
     boolean mBound = false;
-    private ArrayAdapter<String> conversationArray;
+    //private ArrayAdapter<String> conversationArray;
     ListView lv;
     Handler handler; 
+    
+    private ArrayAdapter<String> networkArray;
+
+    
     ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
     
     @Override
@@ -61,27 +66,52 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         setContentView(R.layout.alerts);
         tv = (TextView)this.findViewById(R.id.TextStatus); 		       
         
-        
+/*        
        conversationArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
        lv.setAdapter(conversationArray);
        lv.setOnItemClickListener(this);
+*/       
+       
+       networkArray = new ArrayAdapter<String>(this, R.layout.message);
+       lv = (ListView)this.findViewById(R.id.ListView);
+       lv.setAdapter(networkArray); 
+       lv.setOnItemClickListener(this);       
         
         
     }
+    
+ /*   
+    public void onItemClick(AdapterView<?> parent, View view,
+            int position, long id) {
+    		    	
+    	  int orginIP = Integer.parseInt( (String)((TextView) view).getText() ); //(String)((TextView) view).getText();
+  
+          Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
+          intent.putExtra("originIP", orginIP);
+          startActivity(intent);           
+          
+        }     
+*/    
+    
     
     public void onItemClick(AdapterView<?> parent, View view,
             int position, long id) {
     		
     	  String s = (String)((TextView) view).getText();
     	  String[] sa = s.split(" : ");
-    	  int orginIP = Integer.parseInt(sa[0]);
+    	  int orginIP = 0;
+    	  if (sa[0].equalsIgnoreCase("BROADCASTS"))
+    		  orginIP = Constants.BROADCAST;
+    	  else
+    		  orginIP = Integer.parseInt(sa[0]);
     	  
           Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
           intent.putExtra("originIP", orginIP);
           startActivity(intent);           
           
-        }     
+        }  
+ 
 
     @Override
     protected void onStart() {
@@ -164,6 +194,11 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
                 @Override
                 public void handleMessage(Message msg) {
                     switch (msg.what) {
+                    
+                    case 2:
+                    	loadList();
+                    
+                    break;
         	            case 3:
         	            	loadList();
         	            break;
@@ -182,8 +217,31 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
             mBound = false;
         }
     };	
-    
 
+    private synchronized void loadList() 
+    {
+        networkArray.clear();
+               
+        NetworkInfo ni = NetworkInfo.getInstance();
+        
+        networkArray.add("BROADCASTS" + " : " + ni.broadCasts.size());
+       
+        for (int i=0; i<ni.network.size(); i++) {
+        	
+        	int ip = ni.network.get(i).getIp();
+        	
+        	if(ni.conversations.containsKey(ip))
+        	{
+            	//networkArray.add( );
+            	int count = ni.conversations.get(ip).size();
+            	networkArray.add("" + ip + " : " + count);        		
+        		
+        	} else
+        		networkArray.add("" + ip + " : -");
+
+        }        	    	
+    }	
+/*
     private synchronized void loadList()
     {
         conversationArray.clear();
@@ -198,6 +256,6 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         }    	
     	
     }
-    
+*/    
 
 }

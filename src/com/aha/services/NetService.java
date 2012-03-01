@@ -273,11 +273,13 @@ public class NetService extends Service {
 		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
 		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
 		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
+		Vector<DataObject> v;
 		
 		public MessageHandler(DataObject dataObject) {
 
 			this.inObject = dataObject;
 			//ni = NetworkInfo.getInstance();
+			v = new Vector<DataObject>();
 
 		}
 
@@ -312,8 +314,10 @@ public class NetService extends Service {
 						outObject.setOrginAddress(ni.getMyIP());
 						outObject.setMessageType(Constants.JOIN_ACK);
 						outObject.setReassignAddress(highIP);
+						outObject.setMessage("Welcome to the network!");
 						sendMessage(outObject);
-						ni.network.add(new NetworkNode(0,0,highIP));	
+						ni.network.add(new NetworkNode(0,0,highIP));
+						ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
 						
 						if (alertsHandler != null)
 							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
@@ -328,11 +332,17 @@ public class NetService extends Service {
 						ni.setAcknowledged(true);
 						
 						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
+						ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
+						
+						//Vector<DataObject> v = new Vector<DataObject>();
+						v.add(inObject);
+						ni.conversations.put(Constants.BROADCAST, v);
+						
 						int ip = 0;
 
 						ip = inObject.getReassignAddress();
 						ni.setMyIP(ip);
-						device.changeIP(ip);
+						device.changeIP(ip);						
 						
 						if (netHandler != null)
 							netHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
@@ -343,14 +353,25 @@ public class NetService extends Service {
 					case Constants.ALERT:
 						
 						if (inObject.getDestinationAddress() == Constants.BROADCAST)
-							ni.broadCasts.add(inObject);
-						else {
+						{
 							if (ni.conversations.containsKey(orginIP)) {
-								Vector<DataObject> v = ni.conversations
+								v = ni.conversations
+										.get(Constants.BROADCAST);
+								v.add(inObject);
+							} else {
+								v = new Vector<DataObject>();
+								v.add(inObject);
+								ni.conversations.put(Constants.BROADCAST, v);
+							}
+							
+						} else {
+							
+							if (ni.conversations.containsKey(orginIP)) {
+								v = ni.conversations
 										.get(orginIP);
 								v.add(inObject);
 							} else {
-								Vector<DataObject> v = new Vector<DataObject>();
+								v = new Vector<DataObject>();
 								v.add(inObject);
 								ni.conversations.put(orginIP, v);
 							}							
@@ -419,26 +440,19 @@ public class NetService extends Service {
 
 						NetworkThread.sleep(5000);
 						
-						Handler handler = AppInfo.getInstance().getNetworkHandler();
-/*						
-						
-						if (isAcknowledged())
-						{
-							handler.obtainMessage(3, -1, -1, "The network is up")
-									.sendToTarget();							
-						}
-*/						
+						Handler handler = AppInfo.getInstance().getNetworkHandler();					
 
 						//else 
 						if (!ni.isAcknowledged()) { 	
 							//device specific if first to join
-
+							
+							ni.setMyIP(11);
+							device.changeIP(11);
+							ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
+							
 							// for eris type, which can continue to 
 							if (device.deviceCanAdvertiseNetwork())
-							{
-								ni.setMyIP(11);
-								device.changeIP(11);
-								
+							{								
 								handler.obtainMessage(3, -1, -1,
 								"There are no other devices available, you are advertising the network")
 								.sendToTarget();
@@ -446,8 +460,6 @@ public class NetService extends Service {
 								handler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + "11").sendToTarget(); 	
 								
 							} else {
-
-								device.changeIP(11);
 								
 								handler.obtainMessage(3, -1, -1,
 								"There are no other devices available, you are advertising the network for 1 minute")
@@ -458,7 +470,11 @@ public class NetService extends Service {
 								NetworkThread.sleep(50000);
 								
 								netOff();
-							}							
+							}	
+							
+							
+							
+							
 						}		
 					}
 

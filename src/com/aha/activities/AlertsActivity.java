@@ -58,6 +58,8 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     ListView lv;
     Handler handler; 
     
+    CustomAdapter networkAdapter;
+    
     private ArrayAdapter<String> networkArray;
     
     @Override
@@ -68,7 +70,10 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
             
        networkArray = new ArrayAdapter<String>(this, R.layout.message);
        lv = (ListView)this.findViewById(R.id.ListView);
-       lv.setAdapter(new CustomAdapter()); 
+       
+       networkAdapter = new CustomAdapter();
+       
+       lv.setAdapter(networkAdapter); 
        lv.setOnItemClickListener(this);       
         
         
@@ -100,7 +105,8 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         {
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-	        loadList();
+	        networkAdapter.notifyDataSetChanged();
+	        //loadList();
 	        
         } catch (Exception e) {
         	
@@ -174,11 +180,13 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
                     switch (msg.what) {
                     
                     case 2:
-                    	loadList();
+                    	networkAdapter.notifyDataSetChanged();
+                    	//loadList();
                     
                     break;
         	            case 3:
-        	            	loadList();
+        	            	networkAdapter.notifyDataSetChanged();
+        	            	//loadList();
         	            break;
                     }
                 }
@@ -202,7 +210,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
                
         NetworkInfo ni = NetworkInfo.getInstance();
         
-        networkArray.add("BROADCASTS" + " : " + ni.broadCasts.size());
+        //networkArray.add("BROADCASTS" + " : " + ni.broadCasts.size());
        
         for (int i=0; i<ni.network.size(); i++) {
         	
@@ -242,15 +250,31 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
 	        NetworkInfo ni = NetworkInfo.getInstance();
 			int ip = ni.network.get(position).getIp();
 			
-			if(ni.conversations.containsKey(ip))
+			if (ip == Constants.BROADCAST)
 			{
-				//networkArray.add( );
-				int count = ni.conversations.get(ip).size();
-				label.setText("" + ip + " : " + count);        		
+				if(ni.conversations.containsKey(ip))
+				{
+					//networkArray.add( );
+					int count = ni.conversations.get(ip).size();
+					label.setText("BROADCASTS : " + count);        		
+					
+				} else
+					label.setText("BROADCASTS : -");				
 				
-			} else
-				label.setText("" + ip + " : -");
-	
+				
+			} else {
+		
+				if(ni.conversations.containsKey(ip))
+				{
+					//networkArray.add( );
+					int count = ni.conversations.get(ip).size();
+					label.setText("" + ip + " : " + count);        		
+					
+				} else
+					label.setText("" + ip + " : -");
+				
+			}
+			
 	      return row;       
 	    }
 	  }    

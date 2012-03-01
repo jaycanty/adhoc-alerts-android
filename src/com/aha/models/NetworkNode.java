@@ -37,7 +37,7 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 	}
 	public int compareTo(Object arg0) {
 		// TODO Auto-generated method stub
-		int otherIP = ((Integer)arg0).intValue();
+		int otherIP = ((NetworkNode)arg0).getIp();
 		
 		if (ip > otherIP)
 			return 1;

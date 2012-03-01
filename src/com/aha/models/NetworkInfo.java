@@ -25,7 +25,6 @@ public class NetworkInfo {
 
 	
 	public HashMap<Integer, Vector<DataObject>> conversations;
-	public Vector<DataObject> broadCasts;
 	//public HashMap<String, String> network;
 	public Vector<NetworkNode> network;
 	public Vector<Integer> myNetwork;
@@ -39,7 +38,6 @@ public class NetworkInfo {
 		conversations = new HashMap<Integer, Vector<DataObject>>(); //(HashMap<String, Vector<DataObject>>)Collections.synchronizedMap(new HashMap<String, Vector<DataObject>>());
 		//network = new HashMap<String, String>(); //(HashMap<String, String>)Collections.synchronizedMap(new HashMap<String, String>());
 		network = new Vector<NetworkNode>();
-		broadCasts = new Vector<DataObject>();
 	}	
 	
 	

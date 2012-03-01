@@ -83,7 +83,18 @@ public class ConversationActivity extends Activity implements OnClickListener {
     	    			NetworkInfo ni = NetworkInfo.getInstance();
     	    			
 						if (dataObject.getDestinationAddress() == Constants.BROADCAST)
-							ni.broadCasts.add(dataObject);
+						{
+							if (ni.conversations.containsKey(Constants.BROADCAST)) {
+								Vector<DataObject> v = ni.conversations
+										.get(new Integer(Constants.BROADCAST));
+								v.add(dataObject);
+							} else {
+								Vector<DataObject> v = new Vector<DataObject>();
+								v.add(dataObject);
+								ni.conversations.put(new Integer(Constants.BROADCAST), v);
+							} 							
+							
+						}
 						else {
 							if (ni.conversations.containsKey(orginIP)) {
 								Vector<DataObject> v = ni.conversations
@@ -209,7 +220,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
         
         Vector<DataObject> v = null;
         if (orginIP == Constants.BROADCAST)
-        	v = ni.broadCasts;
+        	v = ni.conversations.get(orginIP);
         else
         	v = ni.conversations.get(orginIP);
         

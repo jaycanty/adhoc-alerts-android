@@ -91,6 +91,11 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
     	  else
     		  orginIP = Integer.parseInt(sa[0]);
     	  
+    	  NetworkInfo ni = NetworkInfo.getInstance();
+    	  
+    	  ni.getNetworkNode(orginIP).setHasNew(false);
+          networkAdapter.notifyDataSetChanged();
+    	  
           Intent intent = new Intent(AlertsActivity.this, ConversationActivity.class);
           intent.putExtra("originIP", orginIP);
           startActivity(intent);           
@@ -121,7 +126,11 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
         super.onResume();
         // The activity has become visible (it is now "resumed").
         Intent intent = new Intent(this, NetService.class);
-        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);	        
+        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);	
+        
+        System.out.println("ON RESUME CALLED");
+        
+        networkAdapter.notifyDataSetChanged();
     }
     
     @Override
@@ -246,14 +255,17 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
 	        row = inflater.inflate(R.layout.message, parent, false);
 	      }
 	      
+	      
 			TextView label = (TextView) row.findViewById(R.id.TextView);
 			
 	        NetworkInfo ni = NetworkInfo.getInstance();
 	        NetworkNode netNode = ni.network.get(position);
 			int ip = netNode.getIp();
 			
+			
+			
 			if (netNode.hasNew())
-				row.setBackgroundColor(Color.RED);
+				label.setBackgroundColor(Color.RED);
 			
 			if (ip == Constants.BROADCAST)
 			{

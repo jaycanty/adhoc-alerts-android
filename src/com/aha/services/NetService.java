@@ -333,7 +333,7 @@ public class NetService extends Service {
 						break;
 					case Constants.JOIN_ACK:
 						
-						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getOrginAddress());
+						System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
 						
 						ni.setAcknowledged(true);
 

@@ -448,7 +448,7 @@ public class NetService extends Service {
 							
 							ni.setMyIP(11);
 							device.changeIP(11);
-							ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
+							//ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
 							
 							// for eris type, which can continue to 
 							if (device.deviceCanAdvertiseNetwork())

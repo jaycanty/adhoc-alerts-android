@@ -39,6 +39,13 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 		// TODO Auto-generated method stub
 		int otherIP = ((NetworkNode)arg0).getIp();
 		
+		if (ip == Constants.BROADCAST)
+			ip = 0;
+		
+		if (otherIP == Constants.BROADCAST)
+			otherIP = 0;
+		
+		
 		if (ip > otherIP)
 			return 1;
 		else if (ip < otherIP)

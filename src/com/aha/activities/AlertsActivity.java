@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -248,7 +249,11 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
 			TextView label = (TextView) row.findViewById(R.id.TextView);
 			
 	        NetworkInfo ni = NetworkInfo.getInstance();
-			int ip = ni.network.get(position).getIp();
+	        NetworkNode netNode = ni.network.get(position);
+			int ip = netNode.getIp();
+			
+			if (netNode.hasNew())
+				row.setBackgroundColor(Color.RED);
 			
 			if (ip == Constants.BROADCAST)
 			{
@@ -260,8 +265,7 @@ public class AlertsActivity extends Activity implements OnItemClickListener {
 					
 				} else
 					label.setText("BROADCASTS : -");				
-				
-				
+								
 			} else {
 		
 				if(ni.conversations.containsKey(ip))

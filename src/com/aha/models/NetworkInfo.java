@@ -39,8 +39,7 @@ public class NetworkInfo {
 		//network = new HashMap<String, String>(); //(HashMap<String, String>)Collections.synchronizedMap(new HashMap<String, String>());
 		network = new Vector<NetworkNode>();
 	}	
-	
-	
+		
 	public synchronized int getInitIP()
 	{		
 		Random r = new Random();
@@ -48,8 +47,7 @@ public class NetworkInfo {
 		this.myIP = ip;
 		return ip;
 	}
-	
-	
+		
 	public synchronized static NetworkInfo getInstance() {
 	      if(instance == null) {
 	         instance = new NetworkInfo();
@@ -57,11 +55,9 @@ public class NetworkInfo {
 	      return instance;
 	}	
 	
-	
 	public synchronized int getMyIP() {
 		return myIP;
 	}
-
 
 	public synchronized void setMyIP(int myIP) {
 		this.myIP = myIP;
@@ -83,13 +79,11 @@ public class NetworkInfo {
 		this.deviceInitiated = deviceInitiated;
 	}
 
-
-	public boolean isJoined() {
+	public synchronized boolean isJoined() {
 		return joined;
 	}
 
-
-	public void setJoined(boolean joined) {
+	public synchronized void setJoined(boolean joined) {
 		this.joined = joined;
 	}	
 	
@@ -100,5 +94,16 @@ public class NetworkInfo {
 	public synchronized void setAcknowledged(boolean acknowledged) {
 		this.acknowledged = acknowledged;
 	}	
+	
+	public synchronized NetworkNode getNetworkNode(int ip)
+	{		
+		for (int i=0; i<network.size(); i++)
+		{
+			NetworkNode nn = network.get(i);
+			if (nn.getIp() == ip)
+				return nn;
+		}
+		return null;
+	}
 
 }

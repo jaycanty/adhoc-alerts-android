@@ -9,12 +9,15 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 	private int localRank;
 	private int globalRank;
 	private int ip;
+	private boolean hasNew;
+	
 	
 	public NetworkNode(int localRank, int globalRank, int ip)
 	{
 		this.localRank = localRank;
 		this.globalRank = globalRank;
 		this.ip = ip;
+		this.hasNew = false;
 	}
 	
 	public synchronized int getLocalRank() {
@@ -35,6 +38,14 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 	public synchronized void setIp(int ip) {
 		this.ip = ip;
 	}
+	public boolean hasNew() {
+		return hasNew;
+	}
+
+	public void setHasNew(boolean hasNew) {
+		this.hasNew = hasNew;
+	}
+
 	public int compareTo(Object arg0) {
 		// TODO Auto-generated method stub
 		int otherIP = ((NetworkNode)arg0).getIp();

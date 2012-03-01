@@ -299,11 +299,9 @@ public class NetService extends Service {
 						if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
 							highIP = 13;
 						}
-						else
-						{
+						else {
 							Collections.sort(ni.network);
 							highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
-	
 						}
 						
 						System.out.println(highIP);
@@ -331,9 +329,7 @@ public class NetService extends Service {
 						
 						if (alertsHandler != null)
 							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
-						
-						
-						
+
 						break;
 					case Constants.JOIN_ACK:
 						
@@ -373,7 +369,8 @@ public class NetService extends Service {
 								v.add(inObject);
 								ni.conversations.put(Constants.BROADCAST, v);
 							}
-							
+							ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);							
+													
 						} else {
 							
 							if (ni.conversations.containsKey(orginIP)) {
@@ -384,7 +381,8 @@ public class NetService extends Service {
 								v = new Vector<DataObject>();
 								v.add(inObject);
 								ni.conversations.put(orginIP, v);
-							}							
+							}	
+							ni.getNetworkNode(orginIP).setHasNew(true);
 						}
 
 						if (alertsHandler != null)

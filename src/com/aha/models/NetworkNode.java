@@ -40,11 +40,10 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 		int otherIP = ((NetworkNode)arg0).getIp();
 		
 		if (ip == Constants.BROADCAST)
-			ip = 0;
+			return -1;
 		
 		if (otherIP == Constants.BROADCAST)
-			otherIP = 0;
-		
+			return 1;
 		
 		if (ip > otherIP)
 			return 1;

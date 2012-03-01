@@ -296,7 +296,7 @@ public class NetService extends Service {
 						
 						int highIP = 0;
 						
-						if (ni.network.size() == 0 || ni.network == null) {
+						if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
 							highIP = 13;
 						}
 						else
@@ -329,9 +329,9 @@ public class NetService extends Service {
 						System.out.println("THE JOIN HAS BEEN ACKED MYIP: " + inObject.getOrginAddress());
 						
 						ni.setAcknowledged(true);
-						
-						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
+
 						ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
+						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
 						
 						//Vector<DataObject> v = new Vector<DataObject>();
 						v.add(inObject);

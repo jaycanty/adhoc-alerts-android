@@ -270,8 +270,8 @@ public class NetService extends Service {
 	private class MessageHandler extends Thread {
 
 		DataObject inObject;
-		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
-		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+		Handler netHandler = AppInfo.getInstance().getAlertsHandler();
+		Handler infoHandler = AppInfo.getInstance().getNetworkHandler();
 		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
 		Vector<DataObject> v;
 		
@@ -327,8 +327,8 @@ public class NetService extends Service {
 						sendMessage(outObject);
 						ni.network.add(new NetworkNode(0,0,highIP));
 						
-						if (alertsHandler != null)
-							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
+						if (netHandler != null)
+							netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
 
 						break;
 					case Constants.JOIN_ACK:
@@ -350,10 +350,15 @@ public class NetService extends Service {
 						ni.setMyIP(ip);
 						device.changeIP(ip);						
 						
+						if (infoHandler != null)
+						{
+							infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
+							infoHandler.obtainMessage(3, -1, -1,
+							"YEPEE!\nA network exists, you can send and receive alerts.")
+							.sendToTarget();
+						}
 						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
-						if (alertsHandler != null)
-							alertsHandler.obtainMessage(2, -1, -1, "").sendToTarget();					
+							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();					
 						
 						break;
 					case Constants.ALERT:
@@ -385,8 +390,8 @@ public class NetService extends Service {
 							ni.getNetworkNode(orginIP).setHasNew(true);
 						}
 
-						if (alertsHandler != null)
-							alertsHandler.obtainMessage(3, -1, -1, "")
+						if (netHandler != null)
+							netHandler.obtainMessage(3, -1, -1, "")
 									.sendToTarget();
 
 						if (convoHandler != null)
@@ -421,36 +426,54 @@ public class NetService extends Service {
 
 		
 		public void run() {
+			Handler handler = AppInfo.getInstance().getNetworkHandler();
 			try {
+						
 				if (!ni.isNetworkUp()) {
+										
 					if (!ni.isDeviceInitiated()) {
 						device.connectDevice();
 						ni.setDeviceInitiated(true);
 					}
 					
+					handler.obtainMessage(3, -1, -1,
+							"The radio is being configured for ad-hoc mode and will look for a network.\nThis should take " + device.getDeviceSleep()/1000 + " seconds")
+							.sendToTarget();
+					
 					NetworkThread.sleep(device.getDeviceSleep()); // (80000);
 
 					if (!device.doesNetworkExist()) {
 						device.disconnectDevice();
+						
+						handler.obtainMessage(3, -1, -1,
+								"There was an error initializing the wifi\n. Go to 'disconnect' in the menu then try to 'connect' again.\nIf errors persist, try rebooting the device.")
+								.sendToTarget();						
 
 					} else {
 						
-						ni.setNetworkUp(device.doesNetworkExist());
+						ni.setNetworkUp(true);
 						
 						startDaemon();
+						
+						handler.obtainMessage(3, -1, -1,
+						"The device is now advertising the network. It will take 7 seconds to pair with other devices")
+						.sendToTarget();		
 					
-						NetworkThread.sleep(7000);      
+						NetworkThread.sleep(7000);  
+						
+						handler.obtainMessage(3, -1, -1,
+						"The device is sending discovery messages to see if there are any neighbors")
+						.sendToTarget();	
 						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);
 						dataObject.setOrginAddress(ni.getMyIP());
 						dataObject.setMessageType(Constants.JOIN);
 						sendMessage(dataObject);	
+						
 
 						NetworkThread.sleep(5000);
 						
-						Handler handler = AppInfo.getInstance().getNetworkHandler();					
-
 						//else 
 						if (!ni.isAcknowledged()) { 	
 							//device specific if first to join
@@ -496,6 +519,9 @@ public class NetService extends Service {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				handler.obtainMessage(3, -1, -1,
+						"There was an error initializing the wifi\n. Go to 'disconnect' in the menu then try to 'connect' again.\nIf errors persist, try rebooting the device.")
+						.sendToTarget();
 			}
 		}// end run
 	}// end inner class

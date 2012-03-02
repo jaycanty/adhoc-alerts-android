@@ -61,6 +61,7 @@
 				  android:orientation="horizontal"
 				  android:layout_width="fill_parent"
 				  android:layout_marginTop="20px" 
+				  android:layout_marginBottom="20px" 
 				  android:layout_height="30px">		  	
 					   <View android:layout_width="fill_parent"
 					     android:layout_height="fill_parent"
@@ -78,14 +79,18 @@
 					     android:layout_height="fill_parent"
 					     android:background="#545a64"
 					     android:layout_weight=".25"/> 					     					     					   
-			   </LinearLayout>	   		   		    		  							  			
-			   <TextView android:layout_width="fill_parent"
-			     android:layout_height="fill_parent" 
-			   	 android:id="@+id/StatusTV"
-			     android:gravity="center"
-			     android:textSize="28px"
-			     android:text="Welcome to ad-hoc alerts.\nSelect 'connect' from the menu to begin."> 
-			   </TextView>	
+			   </LinearLayout>	 
+		     <ScrollView android:id="@+id/ScrollView01"  
+		      android:layout_height="fill_parent"   
+		      android:layout_width="fill_parent"> 
+				   <TextView android:layout_width="fill_parent"
+				     android:layout_height="fill_parent" 
+				   	 android:id="@+id/StatusTV"
+				     android:gravity="center"
+				     android:textSize="28px"
+				     android:text="Welcome to ad-hoc alerts.\nSelect 'connect' from the menu to begin."> 
+				   </TextView>	
+			</ScrollView>
 		</LinearLayout>	   		   		    		  
 	</LinearLayout>  	    
 </LinearLayout>

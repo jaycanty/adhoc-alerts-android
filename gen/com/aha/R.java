@@ -11,35 +11,32 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_tab_grey=0x7f020000;
-        public static final int ic_tab_white=0x7f020001;
-        public static final int ic_tray_tab=0x7f020002;
-        public static final int icon=0x7f020003;
+        public static final int icon=0x7f020000;
+        public static final int info_tab_grey=0x7f020001;
+        public static final int info_tab_white=0x7f020002;
+        public static final int info_tray_tab=0x7f020003;
+        public static final int rounded_corners=0x7f020004;
+        public static final int wifi_tab_grey=0x7f020005;
+        public static final int wifi_tab_white=0x7f020006;
+        public static final int wifi_tray_tab=0x7f020007;
     }
     public static final class id {
-        public static final int Address=0x7f06000a;
         public static final int EditText=0x7f060001;
-        public static final int GlobalB=0x7f060005;
-        public static final int IPTV=0x7f060007;
+        public static final int IPTV=0x7f060004;
         public static final int ListView=0x7f060000;
-        public static final int LocalB=0x7f060004;
-        public static final int Message=0x7f06000b;
         public static final int SendB=0x7f060002;
-        public static final int StatusTV=0x7f060008;
+        public static final int StatusTV=0x7f060005;
         public static final int TextStatus=0x7f060003;
         public static final int TextView=0x7f060006;
-        public static final int connect=0x7f06000d;
-        public static final int disconnect=0x7f06000c;
-        public static final int linearLayout1=0x7f060009;
+        public static final int connect=0x7f060008;
+        public static final int disconnect=0x7f060007;
     }
     public static final class layout {
-        public static final int alerts=0x7f030000;
-        public static final int conversation=0x7f030001;
-        public static final int main=0x7f030002;
-        public static final int message=0x7f030003;
-        public static final int network=0x7f030004;
-        public static final int sendmessage=0x7f030005;
-        public static final int tab_container=0x7f030006;
+        public static final int conversation=0x7f030000;
+        public static final int info=0x7f030001;
+        public static final int message=0x7f030002;
+        public static final int network=0x7f030003;
+        public static final int tab_container=0x7f030004;
     }
     public static final class menu {
         public static final int menu=0x7f050000;

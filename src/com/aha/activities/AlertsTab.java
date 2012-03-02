@@ -20,23 +20,22 @@ public class AlertsTab extends TabActivity {
 	    TabHost tabHost = getTabHost();  // The activity TabHost
 	    TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 	    Intent intent;  // Reusable Intent for each tab
-	    
-	    
+	    tabHost.getTabWidget().setStripEnabled(false);
 
 	    // Create an Intent to launch an Activity for the tab (to be reused)
-	    intent = new Intent().setClass(this, NetworkActivity.class);
+	    intent = new Intent().setClass(this, InfoActivity.class);
 	    //intent.putExtras(b);
 
 	    // Initialize a TabSpec for each tab and add it to the TabHost
-	    spec = tabHost.newTabSpec("network").setIndicator("Network",
-	                      res.getDrawable(R.drawable.ic_tray_tab))
+	    spec = tabHost.newTabSpec("network").setIndicator("---",
+	                      res.getDrawable(R.drawable.info_tray_tab))
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 
 	    // Do the same for the other tabs
-	    intent = new Intent().setClass(this, AlertsActivity.class);
-	    spec = tabHost.newTabSpec("alerts").setIndicator("Alerts",
-	                      res.getDrawable(R.drawable.ic_tray_tab))
+	    intent = new Intent().setClass(this, NetworkActivity.class);
+	    spec = tabHost.newTabSpec("alerts").setIndicator("-----",
+	                      res.getDrawable(R.drawable.wifi_tray_tab))
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 

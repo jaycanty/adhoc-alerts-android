@@ -12,7 +12,6 @@ import android.os.Handler;
 
 public class NetworkInfo {
 	
-	
 	private static NetworkInfo instance = null;
 	private boolean networkUp;
 	private boolean deviceInitiated;
@@ -22,7 +21,6 @@ public class NetworkInfo {
 	private int myIP;
 	
 	//private int GlobalRank;
-
 	
 	public HashMap<Integer, Vector<DataObject>> conversations;
 	//public HashMap<String, String> network;

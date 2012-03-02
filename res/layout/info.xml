@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" 
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+   <TextView android:layout_width="fill_parent"
+     android:layout_height="wrap_content" 
+     android:id="@+id/TextStatus"
+     android:gravity="center_horizontal"
+     android:layout_marginTop="20px"
+     android:textSize="28px"
+     android:textColor="#656565"
+     android:text="AD-HOC ALERTS"> 
+   </TextView>	
+	<LinearLayout 
+	  android:orientation="vertical"
+	  android:layout_width="fill_parent"
+	  android:layout_height="fill_parent"
+	  android:paddingTop="10px">	 
+		<LinearLayout 
+		  android:orientation="horizontal"
+		  android:layout_width="fill_parent"
+		  android:layout_height="wrap_content">
+			   <TextView android:layout_width="wrap_content"
+			     android:layout_height="wrap_content" 
+				 android:textSize="28px"
+			     android:text="MY IP: "> 
+			   </TextView>		  
+			   <TextView android:layout_width="wrap_content"
+			     android:layout_height="wrap_content" 
+			     android:gravity="left"
+				 android:textSize="28px"		     
+			     android:id = "@+id/IPTV"
+			     android:text="-"> 
+			   </TextView>	
+		</LinearLayout> 
+		<LinearLayout 
+		  android:orientation="horizontal"
+		  android:layout_width="fill_parent"
+		  android:layout_height="wrap_content">
+			   <TextView android:layout_width="wrap_content"
+			     android:layout_height="wrap_content" 
+			     android:gravity="left"
+			     android:textSize="28px"
+			     android:text="MY HANDLE: "> 
+			   </TextView>	
+			   <TextView android:layout_width="wrap_content"
+			     android:layout_height="wrap_content" 
+			     android:gravity="left"
+			     android:textSize="28px"
+			     android:text="JAY"> 
+			   </TextView>	
+		</LinearLayout> 
+		<LinearLayout 
+		  android:orientation="vertical"
+		  android:layout_width="fill_parent"
+		  android:layout_height="fill_parent"
+		  android:background="@drawable/rounded_corners"		  
+		  android:layout_marginTop="20px">
+			   <LinearLayout 
+				  android:orientation="horizontal"
+				  android:layout_width="fill_parent"
+				  android:layout_marginTop="20px" 
+				  android:layout_height="30px">		  	
+					   <View android:layout_width="fill_parent"
+					     android:layout_height="fill_parent"
+					     android:background="#545a64"
+					     android:layout_weight=".25"/> 
+					   <View android:layout_width="fill_parent"
+					     android:layout_height="fill_parent"
+					     android:background="#545a64"
+					     android:layout_weight=".25"/> 
+					   <View android:layout_width="fill_parent"
+					     android:layout_height="fill_parent"
+					     android:background="#545a64"
+					     android:layout_weight=".25"/> 
+					   <View android:layout_width="fill_parent"
+					     android:layout_height="fill_parent"
+					     android:background="#545a64"
+					     android:layout_weight=".25"/> 					     					     					   
+			   </LinearLayout>	   		   		    		  							  			
+			   <TextView android:layout_width="fill_parent"
+			     android:layout_height="fill_parent" 
+			   	 android:id="@+id/StatusTV"
+			     android:gravity="center"
+			     android:textSize="28px"
+			     android:text="Welcome to ad-hoc alerts.\nSelect 'connect' from the menu to begin."> 
+			   </TextView>	
+		</LinearLayout>	   		   		    		  
+	</LinearLayout>  	    
+</LinearLayout>

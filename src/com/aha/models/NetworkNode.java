@@ -38,15 +38,15 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 	public synchronized void setIp(int ip) {
 		this.ip = ip;
 	}
-	public boolean hasNew() {
+	public synchronized boolean hasNew() {
 		return hasNew;
 	}
 
-	public void setHasNew(boolean hasNew) {
+	public synchronized void setHasNew(boolean hasNew) {
 		this.hasNew = hasNew;
 	}
 
-	public int compareTo(Object arg0) {
+	public synchronized int compareTo(Object arg0) {
 		// TODO Auto-generated method stub
 		int otherIP = ((NetworkNode)arg0).getIp();
 		

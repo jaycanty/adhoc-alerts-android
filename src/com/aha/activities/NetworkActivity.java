@@ -55,7 +55,7 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.network);
-            
+         
        lv = (ListView)this.findViewById(R.id.ListView);
        networkAdapter = new CustomAdapter();
        lv.setAdapter(networkAdapter); 

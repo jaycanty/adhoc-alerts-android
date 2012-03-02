@@ -66,18 +66,22 @@
 					   <View android:layout_width="fill_parent"
 					     android:layout_height="fill_parent"
 					     android:background="#545a64"
+					     android:id="@+id/StageView1"
 					     android:layout_weight=".25"/> 
 					   <View android:layout_width="fill_parent"
 					     android:layout_height="fill_parent"
 					     android:background="#545a64"
+					     android:id="@+id/StageView2"
 					     android:layout_weight=".25"/> 
 					   <View android:layout_width="fill_parent"
 					     android:layout_height="fill_parent"
 					     android:background="#545a64"
+					     android:id="@+id/StageView3"
 					     android:layout_weight=".25"/> 
 					   <View android:layout_width="fill_parent"
 					     android:layout_height="fill_parent"
 					     android:background="#545a64"
+					     android:id="@+id/StageView4"
 					     android:layout_weight=".25"/> 					     					     					   
 			   </LinearLayout>	 
 		     <ScrollView android:id="@+id/ScrollView01"  

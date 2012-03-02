@@ -92,8 +92,6 @@ public class NetService extends Service {
 	}
 
 	public String netOff() {
-
-		device.disconnectDevice();
 		
 		NetworkInfo ni = NetworkInfo.getInstance();
 		
@@ -104,11 +102,19 @@ public class NetService extends Service {
 		ni.network.clear();
 		ni.conversations.clear();
 		
+		DataObject dataObject = new DataObject();
+		dataObject.setDestinationAddress(Constants.BROADCAST);
+		dataObject.setOrginAddress(ni.getMyIP());
+		dataObject.setMessageType(Constants.QUIT);
+		sendMessage(dataObject);
+		
 		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
 		
 		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
 		
 		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+		
+		
 		
 		int ip = ni.getInitIP();
 		
@@ -123,10 +129,9 @@ public class NetService extends Service {
 		if (convoHandler != null)
 			convoHandler.obtainMessage(3, -1, -1, "")
 					.sendToTarget();
-		
-		
-		// device.getStatus();
 
+		// device.getStatus();
+		
 		return "Network Off";
 	}
 
@@ -139,7 +144,7 @@ public class NetService extends Service {
 
 	}
 
-	public synchronized String sendMessage(DataObject dataObject) {
+	public synchronized void sendMessage(DataObject dataObject) {
 
 		try {
 			
@@ -183,9 +188,7 @@ public class NetService extends Service {
 			e.printStackTrace();
 		}
 		// Toast.makeText(AdHoc.this, msg, Toast.LENGTH_SHORT).show();
-
-		return "hello";
-
+		//return "hello";
 	}
 
 	public void startDaemon() {
@@ -195,7 +198,6 @@ public class NetService extends Service {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private class ReceiveMessageThread extends Thread {
@@ -226,13 +228,10 @@ public class NetService extends Service {
 							len |= (buffer[3 - i] & 0xff) << (i << 3);
 						}
 
-						
-						//System.out.println("Length = " + len);
+						System.out.println("Length = " + len);
 
 						byte[] packet = new byte[len];
-
 						System.arraycopy(buffer, 4, packet, 0, len);
-
 						ByteArrayInputStream baos = new ByteArrayInputStream(
 								packet);
 						oos = new ObjectInputStream(baos);
@@ -248,16 +247,15 @@ public class NetService extends Service {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				}
-				
+				}				
 				oos.close();
-				
+				datagramSocket.close();
+				System.out.println("GRACEFULL");
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}// end run
-
 	}// end inner class
 
 	public void handleMessage(DataObject dataObject) {
@@ -303,7 +301,7 @@ public class NetService extends Service {
 							Collections.sort(ni.network);
 							highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
 						}
-						
+				
 						System.out.println(highIP);
 						
 						DataObject outObject = new DataObject();
@@ -312,7 +310,7 @@ public class NetService extends Service {
 						outObject.setOrginAddress(ni.getMyIP());
 						outObject.setMessageType(Constants.JOIN_ACK);
 						outObject.setReassignAddress(highIP);
-						outObject.setMessage("Hey " + highIP + "welcome to the network!");
+						outObject.setMessage("" + highIP + " welcome to the network!");
 						
 						if (ni.conversations.containsKey(Constants.BROADCAST)) {
 							v = ni.conversations
@@ -343,17 +341,18 @@ public class NetService extends Service {
 						//Vector<DataObject> v = new Vector<DataObject>();
 						v.add(inObject);
 						ni.conversations.put(Constants.BROADCAST, v);
+						ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
 						
 						int ip = 0;
 
 						ip = inObject.getReassignAddress();
 						ni.setMyIP(ip);
-						device.changeIP(ip);						
+						device.changeIP(ip);	
 						
 						if (infoHandler != null)
 						{
 							infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
-							infoHandler.obtainMessage(3, -1, -1,
+							infoHandler.obtainMessage(3, 4, -1,
 							"YEPEE!\nA network exists, you can send and receive alerts.")
 							.sendToTarget();
 						}
@@ -398,6 +397,10 @@ public class NetService extends Service {
 							convoHandler.obtainMessage(3, -1, -1, "")
 									.sendToTarget();
 						break;
+					case Constants.QUIT:
+						device.disconnectDevice();
+						System.out.println("QUIT");
+					break;
 					}
 
 				}
@@ -436,7 +439,7 @@ public class NetService extends Service {
 						ni.setDeviceInitiated(true);
 					}
 					
-					handler.obtainMessage(3, -1, -1,
+					handler.obtainMessage(3, 1, -1,
 							"The radio is being configured for ad-hoc mode and will look for a network.\nThis should take " + device.getDeviceSleep()/1000 + " seconds")
 							.sendToTarget();
 					
@@ -455,13 +458,13 @@ public class NetService extends Service {
 						
 						startDaemon();
 						
-						handler.obtainMessage(3, -1, -1,
+						handler.obtainMessage(3, 2, -1,
 						"The device is now advertising the network. It will take 7 seconds to pair with other devices")
 						.sendToTarget();		
 					
 						NetworkThread.sleep(7000);  
 						
-						handler.obtainMessage(3, -1, -1,
+						handler.obtainMessage(3, 3, -1,
 						"The device is sending discovery messages to see if there are any neighbors")
 						.sendToTarget();	
 						
@@ -471,7 +474,6 @@ public class NetService extends Service {
 						dataObject.setMessageType(Constants.JOIN);
 						sendMessage(dataObject);	
 						
-
 						NetworkThread.sleep(5000);
 						
 						//else 
@@ -506,16 +508,6 @@ public class NetService extends Service {
 
 						}		
 					}
-
-
-
-					/*
-					 * 
-					 * NetworkThread.sleep(5000);
-					 * 
-					 * if(!ni.isJoined()) { //shut it down time is up //if an
-					 * eris keep working }
-					 */
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

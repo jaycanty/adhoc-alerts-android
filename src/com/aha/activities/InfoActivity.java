@@ -51,10 +51,21 @@ public class InfoActivity extends Activity {
     ListView lv;
     Handler handler;
     
+    View stage1;
+    View stage2;
+    View stage3;
+    View stage4;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.info);
+        
+        stage1 = (View)this.findViewById(R.id.StageView1);
+        stage2 = (View)this.findViewById(R.id.StageView2);
+        stage3 = (View)this.findViewById(R.id.StageView3);
+        stage4 = (View)this.findViewById(R.id.StageView4);
+        
         statusTV = (TextView)this.findViewById(R.id.StatusTV);
         ipTV = (TextView)this.findViewById(R.id.IPTV);
        
@@ -129,7 +140,8 @@ public class InfoActivity extends Activity {
 	        	            	ipTV.setText(ip);
 	        	        break;
                     	case 3:
-        	            statusTV.setText((String) msg.obj);	     	            
+        	            statusTV.setText((String) msg.obj);	 
+        	            colorProgressBar(msg.arg1);
         	            break;
                     }
                 }
@@ -145,6 +157,26 @@ public class InfoActivity extends Activity {
         public void onServiceDisconnected(ComponentName arg0) {
             mBound = false;
         }
+        
+        private void colorProgressBar(int stage)
+        {
+            switch (stage) {
+            case 1:
+            	stage1.setBackgroundColor(0x88913333);
+            break;
+            case 2:
+            	stage2.setBackgroundColor(0x88efed62);
+            break;
+            case 3:
+            	stage3.setBackgroundColor(0x8831547b);
+            break;
+            case 4:
+            	stage4.setBackgroundColor(0x88477b31);
+            break;
+            }
+        }        
+        
+        
     };	
     
     
@@ -162,7 +194,7 @@ public class InfoActivity extends Activity {
         switch (item.getItemId()) {
         case R.id.disconnect:
             mService.netOff();
-            statusTV.setText("Network is off");
+            statusTV.setText("Network is off\nRe-'connect' anytime!");
             return true;
         case R.id.connect:
 	        if (mBound) {	    	        	
@@ -190,16 +222,4 @@ public class InfoActivity extends Activity {
             return super.onOptionsItemSelected(item);
         }
     }    
-    
-    /*
-
-913333
-efed62
-31547b
-477b31
-  
-     */
-    
-    
-
 }

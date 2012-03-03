@@ -50,6 +50,7 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
     ListView lv;
     Handler handler; 
     CustomAdapter networkAdapter;
+    public static boolean inFocus;
         
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
        networkAdapter = new CustomAdapter();
        lv.setAdapter(networkAdapter); 
        lv.setOnItemClickListener(this);          
+       inFocus = false;
     }
         
     public void onItemClick(AdapterView<?> parent, View view,
@@ -90,6 +92,7 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
 	        Intent intent = new Intent(this, NetService.class);
 	        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	        networkAdapter.notifyDataSetChanged();
+	        //inFocus = true;
 	        
         } catch (Exception e) {
         	
@@ -104,7 +107,9 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
         Intent intent = new Intent(this, NetService.class);
         getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);	        
         networkAdapter.notifyDataSetChanged();
+        inFocus = true;
     }
+    
     
     @Override
     protected void onPause() {
@@ -112,6 +117,7 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
         if (mBound) {
         	getApplicationContext().unbindService(mConnection);
             mBound = false;
+            inFocus = false;
         }	        
         // Another activity is taking focus (this activity is about to be "paused").
     }	    
@@ -123,6 +129,7 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
         if (mBound) {
         	getApplicationContext().unbindService(mConnection);
             mBound = false;
+            inFocus = false;
         }
     }
     

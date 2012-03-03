@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 import com.aha.R;
+import com.aha.activities.NetworkActivity;
 import com.aha.models.AppInfo;
 import com.aha.models.Constants;
 import com.aha.models.DataObject;
@@ -373,7 +374,8 @@ public class NetService extends Service {
 								v.add(inObject);
 								ni.conversations.put(Constants.BROADCAST, v);
 							}
-							ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);							
+							if (NetworkActivity.inFocus)
+								ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);							
 													
 						} else {
 							
@@ -385,8 +387,9 @@ public class NetService extends Service {
 								v = new Vector<DataObject>();
 								v.add(inObject);
 								ni.conversations.put(orginIP, v);
-							}	
-							ni.getNetworkNode(orginIP).setHasNew(true);
+							}
+							if (NetworkActivity.inFocus)
+								ni.getNetworkNode(orginIP).setHasNew(true);
 						}
 
 						if (netHandler != null)
@@ -504,6 +507,8 @@ public class NetService extends Service {
 								NetworkThread.sleep(50000);
 								
 								netOff();
+								
+								
 							}	
 
 						}		

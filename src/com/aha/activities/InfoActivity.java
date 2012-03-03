@@ -165,10 +165,10 @@ public class InfoActivity extends Activity {
             	stage1.setBackgroundColor(0x88913333);
             break;
             case 2:
-            	stage2.setBackgroundColor(0x88efed62);
+            	stage2.setBackgroundColor(0x8831547b);
             break;
             case 3:
-            	stage3.setBackgroundColor(0x8831547b);
+            	stage3.setBackgroundColor(0x88efed62);
             break;
             case 4:
             	stage4.setBackgroundColor(0x88477b31);

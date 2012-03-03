@@ -85,17 +85,22 @@ public class NetService extends Service {
 		return "Wifi Disabled";
 	}
 
-	public String advertiseNet(int lRank, Context context, Handler handler) {
-
+	public String advertiseNet(int lRank, Context context, Handler handler) 
+	{
 		device.connectDevice();
-
 		return "Advertising Network";
 	}
 
 	public String netOff() {
 		
 		NetworkInfo ni = NetworkInfo.getInstance();
-		
+	
+		DataObject dataObject = new DataObject();
+		dataObject.setDestinationAddress(Constants.BROADCAST);
+		dataObject.setOrginAddress(ni.getMyIP());
+		dataObject.setMessageType(Constants.QUIT);
+		sendMessage(dataObject);
+
 		device.disconnectDevice();
 		ni.setDeviceInitiated(false);
 		ni.setNetworkUp(false);
@@ -103,27 +108,22 @@ public class NetService extends Service {
 		ni.setAcknowledged(false);
 		ni.network.clear();
 		ni.conversations.clear();
-/*		
-		DataObject dataObject = new DataObject();
-		dataObject.setDestinationAddress(Constants.BROADCAST);
-		dataObject.setOrginAddress(ni.getMyIP());
-		dataObject.setMessageType(Constants.QUIT);
-		sendMessage(dataObject);
-*/		
-		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
-		
-		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
-		
-		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
+	
+		Handler netHandler = AppInfo.getInstance().getAlertsHandler();
+		Handler convoHandler = AppInfo.getInstance().getConversationHandler();		
+		Handler infoHandler = AppInfo.getInstance().getNetworkHandler();
 
 		int ip = ni.getInitIP();
 		
-		if (netHandler != null)
+		if (infoHandler != null)
 		{
-			netHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget();		
+			infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget();
+			infoHandler.obtainMessage(3, 5, -1,
+					"Network is off\nRe-'connect' anytime.")
+					.sendToTarget();
 		}
-		if (alertsHandler != null)
-			alertsHandler.obtainMessage(3, -1, -1, "")
+		if (netHandler != null)
+			netHandler.obtainMessage(3, -1, -1, "")
 					.sendToTarget();
 		
 		if (convoHandler != null)
@@ -243,7 +243,17 @@ public class NetService extends Service {
 						System.out.println("TYPE: " + inObject.getMessageType());
 						
 						handleMessage(inObject);
-
+						
+						if (inObject.getMessageType() == Constants.QUIT)
+						{
+							NetworkInfo ni = NetworkInfo.getInstance();
+							
+							if (inObject.getOrginAddress() == ni.getMyIP())
+							{
+								System.out.println("QUIT");
+								ni.setNetworkUp(false);
+							}
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -296,6 +306,9 @@ public class NetService extends Service {
 						
 						if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
 							highIP = 13;
+							infoHandler.obtainMessage(3, 4, -1,
+							"YEPEE!\nAnother has joined the network, you can send and receive alerts.")
+							.sendToTarget();
 						}
 						else {
 							Collections.sort(ni.network);
@@ -399,13 +412,9 @@ public class NetService extends Service {
 							convoHandler.obtainMessage(3, -1, -1, "")
 									.sendToTarget();
 						break;
-					case Constants.QUIT:
-						//device.disconnectDevice();
-						System.out.println("QUIT");
-					break;
 					}
-
 				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -140,8 +140,8 @@ public class InfoActivity extends Activity {
 	        	            	ipTV.setText(ip);
 	        	        break;
                     	case 3:
-        	            statusTV.setText((String) msg.obj);	 
-        	            colorProgressBar(msg.arg1);
+	        	            statusTV.setText((String) msg.obj);	 
+	        	            colorProgressBar(msg.arg1);
         	            break;
                     }
                 }
@@ -161,18 +161,24 @@ public class InfoActivity extends Activity {
         private void colorProgressBar(int stage)
         {
             switch (stage) {
-            case 1:
-            	stage1.setBackgroundColor(0x88913333);
-            break;
-            case 2:
-            	stage2.setBackgroundColor(0x8831547b);
-            break;
-            case 3:
-            	stage3.setBackgroundColor(0x88efed62);
-            break;
-            case 4:
-            	stage4.setBackgroundColor(0x88477b31);
-            break;
+	            case 1:
+	            	stage1.setBackgroundColor(0x88913333);
+	            break;
+	            case 2:
+	            	stage2.setBackgroundColor(0x8831547b);
+	            break;
+	            case 3:
+	            	stage3.setBackgroundColor(0x88efed62);
+	            break;
+	            case 4:
+	            	stage4.setBackgroundColor(0x88477b31);
+	            break;
+	            case 5:
+	            	stage1.setBackgroundColor(0xff545a64);
+	               	stage2.setBackgroundColor(0xff545a64);
+	                stage3.setBackgroundColor(0xff545a64);
+	               	stage4.setBackgroundColor(0xff545a64); 
+	            break;
             }
         }        
         
@@ -194,7 +200,6 @@ public class InfoActivity extends Activity {
         switch (item.getItemId()) {
         case R.id.disconnect:
             mService.netOff();
-            statusTV.setText("Network is off\nRe-'connect' anytime!");
             return true;
         case R.id.connect:
 	        if (mBound) {	    	        	
@@ -205,9 +210,7 @@ public class InfoActivity extends Activity {
 		        	builder.setTitle("How long are you staying?");
 		        	builder.setItems(items, new DialogInterface.OnClickListener() {
 		        	    public void onClick(DialogInterface dialog, int item) { 
-		        	 
 		        	    	mService.startNetwork(item);
-		        	    	
 		        	    }
 		        	});
 		        	alert = builder.create();        

@@ -96,27 +96,26 @@ public class NetService extends Service {
 		
 		NetworkInfo ni = NetworkInfo.getInstance();
 		
+		device.disconnectDevice();
 		ni.setDeviceInitiated(false);
 		ni.setNetworkUp(false);
 		ni.setJoined(false);
 		ni.setAcknowledged(false);
 		ni.network.clear();
 		ni.conversations.clear();
-		
+/*		
 		DataObject dataObject = new DataObject();
 		dataObject.setDestinationAddress(Constants.BROADCAST);
 		dataObject.setOrginAddress(ni.getMyIP());
 		dataObject.setMessageType(Constants.QUIT);
 		sendMessage(dataObject);
-		
+*/		
 		Handler alertsHandler = AppInfo.getInstance().getAlertsHandler();
 		
 		Handler convoHandler = AppInfo.getInstance().getConversationHandler();
 		
 		Handler netHandler = AppInfo.getInstance().getNetworkHandler();
-		
-		
-		
+
 		int ip = ni.getInitIP();
 		
 		if (netHandler != null)
@@ -401,7 +400,7 @@ public class NetService extends Service {
 									.sendToTarget();
 						break;
 					case Constants.QUIT:
-						device.disconnectDevice();
+						//device.disconnectDevice();
 						System.out.println("QUIT");
 					break;
 					}

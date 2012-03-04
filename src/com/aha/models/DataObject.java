@@ -17,6 +17,23 @@ public class DataObject implements Serializable {
 	private Object object1;
 	private Object object2;
 	
+	public DataObject(){}
+	
+	public DataObject(DataObject dataO){
+		
+		this.messageType = dataO.getMessageType();
+		this.destinationAddress = dataO.getDestinationAddress();
+		this.orginAddress = dataO.getOrginAddress();
+		this.auxillaryAddress = dataO.getOrginAddress();
+		this.localRank = dataO.getLocalRank();
+		this.globalRank = dataO.getGlobalRank();
+		this.message = dataO.getMessage();
+		
+		this.object1 = dataO.getObject1();
+		this.object2 = dataO.getObject2();		
+		
+	}
+	
 	public int getMessageType() {
 		return messageType;
 	}

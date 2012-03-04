@@ -336,7 +336,7 @@ public class NetService extends Service {
 							
 							//load network
 							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
-							//Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
+							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
 							
 							// add me
 							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
@@ -364,7 +364,7 @@ public class NetService extends Service {
 							outObject.setAuxillaryAddress(highIP);
 							outObject.setMessage("" + highIP + " welcome to the network!");
 							outObject.setObject1(netVec);
-							//outObject.setObject2(conVec);
+							outObject.setObject2(conVec);
 							
 							sendMessage(outObject);
 							
@@ -396,13 +396,18 @@ public class NetService extends Service {
 							System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
 							
 							Vector<NetworkNode> netVec =  (Vector<NetworkNode>)inObject.getObject1();
-							//Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
+							Vector<DataObject> conVec = (Vector<DataObject>)inObject.getObject2();
 
 							// clean nn's
 							for (int i=0; i<netVec.size(); i++)
 							{
 								System.out.println("NET NODE: " + netVec.get(i).getIp());
-							}						
+							}
+							
+							for (int i=0; i<conVec.size(); i++)
+							{
+								System.out.println("DO: " + conVec.get(i).getMessage());
+							}							
 							
 							ni.setAcknowledged(true);
 

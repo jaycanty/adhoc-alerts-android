@@ -232,7 +232,7 @@ public class NetService extends Service {
 				while (NetworkInfo.getInstance().isNetworkUp()) {
 					try {
 						// 52kb buffer
-						byte[] buffer = new byte[512];
+						byte[] buffer = new byte[1024];
 
 						DatagramPacket brodcastReceivePacket = new DatagramPacket(
 								buffer, buffer.length);

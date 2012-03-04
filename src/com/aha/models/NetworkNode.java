@@ -20,6 +20,14 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 		this.hasNew = false;
 	}
 	
+	public NetworkNode(NetworkNode nn)
+	{
+		this.localRank = nn.getLocalRank();
+		this.globalRank = nn.getGlobalRank();
+		this.ip = nn.getIp();
+		this.hasNew = false;
+	}
+	
 	public synchronized int getLocalRank() {
 		return localRank;
 	}

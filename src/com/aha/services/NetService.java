@@ -335,12 +335,7 @@ public class NetService extends Service {
 							}
 							
 							//load network
-							Vector<NetworkNode> netVec;
-							if (ni.network == null)
-								netVec =  new Vector<NetworkNode>(ni.network);
-							else
-								netVec =  new Vector<NetworkNode>();
-							
+							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
 							//Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
 							
 							// add me
@@ -349,11 +344,14 @@ public class NetService extends Service {
 							// clean nn's
 							for (int i=0; i<netVec.size(); i++)
 							{
+								
 								NetworkNode nn = netVec.get(i);
 								if (nn.getIp() == Constants.BROADCAST)
 									nn.setHasNew(true);
 								else
 									nn.setHasNew(false);
+								
+								System.out.println("NET NODE: " + nn.getIp());
 							}
 
 							System.out.println(highIP);

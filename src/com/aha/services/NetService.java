@@ -319,80 +319,81 @@ public class NetService extends Service {
 					switch (inObject.getMessageType()) {
 					case Constants.JOIN:
 						
-						int highIP = 0;
-						
-						if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
-							highIP = 13;
-							infoHandler.obtainMessage(3, 4, -1,
-							"YEPEE!\nAnother has joined the network, you can send and receive alerts.")
-							.sendToTarget();
-						}
-						else {
-							Collections.sort(ni.network);
-							highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
-						}
-				
-						System.out.println(highIP);
-						
-						DataObject outObject = new DataObject();
-						outObject.setDestinationAddress(inObject
-								.getOrginAddress());
-						outObject.setOrginAddress(ni.getMyIP());
-						outObject.setMessageType(Constants.JOIN_ACK);
-						outObject.setReassignAddress(highIP);
-						outObject.setMessage("" + highIP + " welcome to the network!");
-						
-						if (ni.conversations.containsKey(Constants.BROADCAST)) {
-							v = ni.conversations
-									.get(Constants.BROADCAST);
-							v.add(outObject);
-						} else {
-							v = new Vector<DataObject>();
-							v.add(outObject);
-							ni.conversations.put(Constants.BROADCAST, v);
-						}						
-						
-						sendMessage(outObject);
-						ni.network.add(new NetworkNode(0,0,highIP));
-						
-						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
-
-						break;
-					case Constants.JOIN_ACK:
 						
 						if (ni.getMyIP() == Constants.HUB_IP)
 						{
-
-							System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
+													
+							int highIP = 0;
 							
-							ni.setAcknowledged(true);
-	
-							ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
-							ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
-							
-							//Vector<DataObject> v = new Vector<DataObject>();
-							v.add(inObject);
-							ni.conversations.put(Constants.BROADCAST, v);
-							ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
-							
-							int ip = 0;
-	
-							ip = inObject.getReassignAddress();
-							ni.setMyIP(ip);
-							device.changeIP(ip);	
-							
-							if (infoHandler != null)
-							{
-								infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
+							if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
+								highIP = 13;
 								infoHandler.obtainMessage(3, 4, -1,
-								"YEPEE!\nA network exists, you can send and receive alerts.")
+								"YEPEE!\nAnother has joined the network, you can send and receive alerts.")
 								.sendToTarget();
 							}
+							else {
+								Collections.sort(ni.network);
+								highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
+							}
+					
+							System.out.println(highIP);
+							
+							DataObject outObject = new DataObject();
+							outObject.setDestinationAddress(inObject
+									.getOrginAddress());
+							outObject.setOrginAddress(ni.getMyIP());
+							outObject.setMessageType(Constants.JOIN_ACK);
+							outObject.setReassignAddress(highIP);
+							outObject.setMessage("" + highIP + " welcome to the network!");
+							
+							if (ni.conversations.containsKey(Constants.BROADCAST)) {
+								v = ni.conversations
+										.get(Constants.BROADCAST);
+								v.add(outObject);
+							} else {
+								v = new Vector<DataObject>();
+								v.add(outObject);
+								ni.conversations.put(Constants.BROADCAST, v);
+							}						
+							
+							sendMessage(outObject);
+							ni.network.add(new NetworkNode(0,0,highIP));
+							
 							if (netHandler != null)
-								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();		
-						
+								netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
+
 						}
+						break;
+					case Constants.JOIN_ACK:
+						
+
+						System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
+						
+						ni.setAcknowledged(true);
+
+						ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
+						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
+						
+						//Vector<DataObject> v = new Vector<DataObject>();
+						v.add(inObject);
+						ni.conversations.put(Constants.BROADCAST, v);
+						ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
+						
+						int ip = 0;
+
+						ip = inObject.getReassignAddress();
+						ni.setMyIP(ip);
+						device.changeIP(ip);	
+						
+						if (infoHandler != null)
+						{
+							infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
+							infoHandler.obtainMessage(3, 4, -1,
+							"YEPEE!\nA network exists, you can send and receive alerts.")
+							.sendToTarget();
+						}
+						if (netHandler != null)
+							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();					
 						
 						break;
 					case Constants.ALERT:

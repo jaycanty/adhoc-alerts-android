@@ -15,7 +15,8 @@ public class DataObject implements Serializable {
 	private int globalRank;
 	private String message;
 	
-	private Vector<NetworkNode> hubList;
+	private Object object1;
+	private Object object2;
 	
 	public int getMessageType() {
 		return messageType;
@@ -81,13 +82,22 @@ public class DataObject implements Serializable {
 		this.message = message;
 	}
 
-	public Vector<NetworkNode> getHubList() {
-		return hubList;
+	public Object getObject1() {
+		return object1;
 	}
 
-	public void setHubList(Vector<NetworkNode> hubList) {
-		this.hubList = hubList;
+	public void setObject1(Object object1) {
+		this.object1 = object1;
 	}
+
+	public Object getObject2() {
+		return object2;
+	}
+
+	public void setObject2(Object object2) {
+		this.object2 = object2;
+	}
+
 	
 
 }

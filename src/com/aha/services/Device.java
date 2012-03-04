@@ -168,14 +168,14 @@ public class Device {
 	public void initDroid(int ip) {		
 
 		try {
-			
-			
-			
 			//NetworkInfo.getInstance().setMyIP("192.168.0.5");
 			
 			Process ps = Runtime.getRuntime().exec("su");
 			DataOutputStream out = new DataOutputStream(ps.getOutputStream());
-			out.writeBytes("sh /data/jay/connect.sh " + Constants.BASE_ADDRESS + ip + "\n");
+			out.writeBytes("sh /mnt/sdcard/connect.sh " + Constants.BASE_ADDRESS + ip + "\n");
+			
+			//Uri.parse("android.resource://com.androidbook.samplevideo/raw/myvideo");
+			
 			out.writeBytes("exit\n");
 			out.flush();			
 			

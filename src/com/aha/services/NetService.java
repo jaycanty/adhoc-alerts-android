@@ -1,9 +1,16 @@
 package com.aha.services;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
@@ -30,6 +37,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -37,7 +45,6 @@ import android.net.wifi.WifiInfo;
 
 public class NetService extends Service {
 
-	private static WifiManager wfMan;
 	private final IBinder mBinder = new LocalBinder();
 	private final Device device = new Device();
 	private DatagramSocket outSocket;
@@ -46,8 +53,40 @@ public class NetService extends Service {
 
 	@Override
 	public void onCreate() {
-
-		wfMan = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		
+		System.out.println("service started ------------------------------------------------------------");
+		
+		// write scripts to sdcard
+		String[] scriptArray = {"connect", "cli"}; 		
+		for (int i=0; i<scriptArray.length; i++)
+		{
+			try {
+			    File root = Environment.getExternalStorageDirectory();
+			    if (root.canWrite()){
+			    				    	
+			    	InputStream is = null;
+			    	if (i == 0)
+			    		is = getResources().openRawResource(R.raw.connect);
+			    	else
+			    		is = getResources().openRawResource(R.raw.cli);
+			        BufferedReader in = new BufferedReader(new InputStreamReader(is));
+			       			        
+			        File scriptFile = new File(root, scriptArray[i] + ".sh");		        
+			        FileWriter gpxwriter = new FileWriter(scriptFile);
+			        BufferedWriter out = new BufferedWriter(gpxwriter);
+			        
+					String sCurrentLine;
+					 	 
+					while ((sCurrentLine = in.readLine()) != null) 	
+						out.write(sCurrentLine + "\n");
+		
+			        in.close();
+			        out.close();
+			    }
+			} catch (IOException e) {
+			    System.out.println("Could not write file " + e.getMessage());
+			}				
+		}
 	}
 
 	public class LocalBinder extends Binder {
@@ -61,28 +100,6 @@ public class NetService extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
-	}
-
-	/** method for clients */
-	public String getConnectionInfo() {
-
-		WifiInfo wfInfo = wfMan.getConnectionInfo();
-
-		return wfInfo.toString();
-
-	}
-
-	public String enableWifi() {
-
-		wfMan.setWifiEnabled(true);
-
-		return "Wifi Enabled";
-	}
-
-	public String disableWifi() {
-
-		wfMan.setWifiEnabled(false);
-		return "Wifi Disabled";
 	}
 
 	public String advertiseNet(int lRank, Context context, Handler handler) 
@@ -344,33 +361,38 @@ public class NetService extends Service {
 						break;
 					case Constants.JOIN_ACK:
 						
-						System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
-						
-						ni.setAcknowledged(true);
-
-						ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
-						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
-						
-						//Vector<DataObject> v = new Vector<DataObject>();
-						v.add(inObject);
-						ni.conversations.put(Constants.BROADCAST, v);
-						ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
-						
-						int ip = 0;
-
-						ip = inObject.getReassignAddress();
-						ni.setMyIP(ip);
-						device.changeIP(ip);	
-						
-						if (infoHandler != null)
+						if (ni.getMyIP() == Constants.HUB_IP)
 						{
-							infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
-							infoHandler.obtainMessage(3, 4, -1,
-							"YEPEE!\nA network exists, you can send and receive alerts.")
-							.sendToTarget();
+
+							System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
+							
+							ni.setAcknowledged(true);
+	
+							ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
+							ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
+							
+							//Vector<DataObject> v = new Vector<DataObject>();
+							v.add(inObject);
+							ni.conversations.put(Constants.BROADCAST, v);
+							ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
+							
+							int ip = 0;
+	
+							ip = inObject.getReassignAddress();
+							ni.setMyIP(ip);
+							device.changeIP(ip);	
+							
+							if (infoHandler != null)
+							{
+								infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
+								infoHandler.obtainMessage(3, 4, -1,
+								"YEPEE!\nA network exists, you can send and receive alerts.")
+								.sendToTarget();
+							}
+							if (netHandler != null)
+								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();		
+						
 						}
-						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();					
 						
 						break;
 					case Constants.ALERT:
@@ -477,7 +499,15 @@ public class NetService extends Service {
 						
 						handler.obtainMessage(3, 3, -1,
 						"The device is sending discovery messages to see if there are any neighbors")
-						.sendToTarget();	
+						.sendToTarget();
+						
+						WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+						// Get WiFi status
+						WifiInfo info = wifi.getConnectionInfo();
+						
+						System.out.println("MAC: " + info.getMacAddress());
+						
 						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);

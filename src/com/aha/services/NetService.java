@@ -319,10 +319,8 @@ public class NetService extends Service {
 					switch (inObject.getMessageType()) {
 					case Constants.JOIN:
 						
-						
 						if (ni.getMyIP() == Constants.HUB_IP)
 						{
-													
 							int highIP = 0;
 							
 							if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
@@ -335,7 +333,24 @@ public class NetService extends Service {
 								Collections.sort(ni.network);
 								highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
 							}
-					
+							
+							//load network
+							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
+							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
+							
+							// add me
+							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
+
+							// clean nn's
+							for (int i=0; i<netVec.size(); i++)
+							{
+								NetworkNode nn = netVec.get(i);
+								if (nn.getIp() == Constants.BROADCAST)
+									nn.setHasNew(true);
+								else
+									nn.setHasNew(false);
+							}
+
 							System.out.println(highIP);
 							
 							DataObject outObject = new DataObject();
@@ -345,6 +360,14 @@ public class NetService extends Service {
 							outObject.setMessageType(Constants.JOIN_ACK);
 							outObject.setAuxillaryAddress(highIP);
 							outObject.setMessage("" + highIP + " welcome to the network!");
+							outObject.setObject1(netVec);
+							outObject.setObject2(conVec);
+							
+							sendMessage(outObject);
+							
+							//clean for array
+							outObject.setObject1(null);
+							outObject.setObject2(null);
 							
 							if (ni.conversations.containsKey(Constants.BROADCAST)) {
 								v = ni.conversations
@@ -356,7 +379,6 @@ public class NetService extends Service {
 								ni.conversations.put(Constants.BROADCAST, v);
 							}						
 							
-							sendMessage(outObject);
 							ni.network.add(new NetworkNode(0,0,highIP));
 							
 							if (netHandler != null)
@@ -366,34 +388,47 @@ public class NetService extends Service {
 						break;
 					case Constants.JOIN_ACK:
 						
-
-						System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
-						
-						ni.setAcknowledged(true);
-
-						ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
-						ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
-						
-						//Vector<DataObject> v = new Vector<DataObject>();
-						v.add(inObject);
-						ni.conversations.put(Constants.BROADCAST, v);
-						ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
-						
-						int ip = 0;
-
-						ip = inObject.getAuxillaryAddress();
-						ni.setMyIP(ip);
-						device.changeIP(ip);	
-						
-						if (infoHandler != null)
+						if (ni.getMyIP() == inObject.getDestinationAddress())
 						{
-							infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
-							infoHandler.obtainMessage(3, 4, -1,
-							"YEPEE!\nA network exists, you can send and receive alerts.")
-							.sendToTarget();
-						}
-						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();					
+							System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
+							
+							Vector<NetworkNode> netVec =  (Vector<NetworkNode>)inObject.getObject1();
+							//Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
+
+							// clean nn's
+							for (int i=0; i<netVec.size(); i++)
+							{
+								System.out.println("NET NODE: " + netVec.get(i).getIp());
+							}						
+							
+							ni.setAcknowledged(true);
+
+							ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
+							ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
+							
+							//Vector<DataObject> v = new Vector<DataObject>();
+							v.add(inObject);
+							ni.conversations.put(Constants.BROADCAST, v);
+							ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
+							
+							int ip = 0;
+
+							ip = inObject.getAuxillaryAddress();
+							ni.setMyIP(ip);
+							device.changeIP(ip);	
+							
+							if (infoHandler != null)
+							{
+								infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + ip).sendToTarget(); 
+								infoHandler.obtainMessage(3, 4, -1,
+								"YEPEE!\nA network exists, you can send and receive alerts.")
+								.sendToTarget();
+							}
+							if (netHandler != null)
+								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();								
+							
+							
+						}				
 						
 						break;
 					case Constants.ALERT:

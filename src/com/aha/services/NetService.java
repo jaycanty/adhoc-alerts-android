@@ -335,8 +335,13 @@ public class NetService extends Service {
 							}
 							
 							//load network
-							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
-							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
+							Vector<NetworkNode> netVec;
+							if (ni.network == null)
+								netVec =  new Vector<NetworkNode>(ni.network);
+							else
+								netVec =  new Vector<NetworkNode>();
+							
+							//Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
 							
 							// add me
 							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
@@ -361,13 +366,13 @@ public class NetService extends Service {
 							outObject.setAuxillaryAddress(highIP);
 							outObject.setMessage("" + highIP + " welcome to the network!");
 							outObject.setObject1(netVec);
-							outObject.setObject2(conVec);
+							//outObject.setObject2(conVec);
 							
 							sendMessage(outObject);
 							
 							//clean for array
 							outObject.setObject1(null);
-							outObject.setObject2(null);
+							//outObject.setObject2(null);
 							
 							if (ni.conversations.containsKey(Constants.BROADCAST)) {
 								v = ni.conversations

@@ -185,7 +185,7 @@ public class NetService extends Service {
 				len[3 - i] = (byte) ((l & (0xff << shift)) >>> shift);
 			}
 
-			byte[] packet = new byte[512];
+			byte[] packet = new byte[1024];
 
 			System.arraycopy(len, 0, packet, 0, len.length);
 			System.arraycopy(buf, 0, packet, len.length, buf.length);

@@ -343,7 +343,7 @@ public class NetService extends Service {
 									.getOrginAddress());
 							outObject.setOrginAddress(ni.getMyIP());
 							outObject.setMessageType(Constants.JOIN_ACK);
-							outObject.setReassignAddress(highIP);
+							outObject.setAuxillaryAddress(highIP);
 							outObject.setMessage("" + highIP + " welcome to the network!");
 							
 							if (ni.conversations.containsKey(Constants.BROADCAST)) {
@@ -381,7 +381,7 @@ public class NetService extends Service {
 						
 						int ip = 0;
 
-						ip = inObject.getReassignAddress();
+						ip = inObject.getAuxillaryAddress();
 						ni.setMyIP(ip);
 						device.changeIP(ip);	
 						

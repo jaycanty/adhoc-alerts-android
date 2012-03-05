@@ -29,8 +29,8 @@ public class DataObject implements Serializable {
 		this.globalRank = dataO.getGlobalRank();
 		this.message = dataO.getMessage();
 		
-		this.object1 = dataO.getObject1();
-		this.object2 = dataO.getObject2();		
+		this.object1 = null; //dataO.getObject1();
+		this.object2 = null; //dataO.getObject2();		
 		
 	}
 	

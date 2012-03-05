@@ -334,26 +334,6 @@ public class NetService extends Service {
 								highIP = ni.network.get(ni.network.size()-1).getIp() + 1;
 							}
 							
-							//load network
-							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
-							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
-							
-							// add me
-							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
-
-							// clean nn's
-							for (int i=0; i<netVec.size(); i++)
-							{
-								
-								NetworkNode nn = netVec.get(i);
-								if (nn.getIp() == Constants.BROADCAST)
-									nn.setHasNew(true);
-								else
-									nn.setHasNew(false);
-								
-								System.out.println("NET NODE: " + nn.getIp());
-							}
-
 							System.out.println(highIP);
 							
 							DataObject outObject = new DataObject();
@@ -363,25 +343,40 @@ public class NetService extends Service {
 							outObject.setMessageType(Constants.JOIN_ACK);
 							outObject.setAuxillaryAddress(highIP);
 							outObject.setMessage("" + highIP + " welcome to the network!");
-							outObject.setObject1(netVec);
-							outObject.setObject2(conVec);
-							
-							sendMessage(outObject);
-							
-							//clean for array
-							outObject.setObject1(null);
-							//outObject.setObject2(null);
 							
 							if (ni.conversations.containsKey(Constants.BROADCAST)) {
 								v = ni.conversations
 										.get(Constants.BROADCAST);
-								v.add(outObject);
+								v.add(new DataObject(outObject));
 							} else {
 								v = new Vector<DataObject>();
-								v.add(outObject);
+								v.add(new DataObject(outObject));
 								ni.conversations.put(Constants.BROADCAST, v);
-							}						
+							}								
+							//load network
+							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
+							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
+														
+							// add me
+							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
+
+							// clean nn's
+							for (int i=0; i<netVec.size(); i++)
+							{
+								NetworkNode nn = netVec.get(i);
+								if (nn.getIp() == Constants.BROADCAST)
+									nn.setHasNew(true);
+								else
+									nn.setHasNew(false);
+								
+								System.out.println("NET NODE: " + nn.getIp());
+							}
 							
+							outObject.setObject1(netVec);
+							outObject.setObject2(conVec);
+							
+							sendMessage(outObject);
+						
 							ni.network.add(new NetworkNode(0,0,highIP));
 							
 							if (netHandler != null)

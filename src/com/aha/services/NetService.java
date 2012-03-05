@@ -517,13 +517,13 @@ public class NetService extends Service {
 							{
 								if (device.deviceCanAdvertiseNetwork())
 								{								
-									infoHandler.obtainMessage(3, -1, -1,
+									infoHandler.obtainMessage(3, 6, -1,
 									"There are no other devices available, you are advertising the network")
 									.sendToTarget();
 																	
 								} else {
 									
-									infoHandler.obtainMessage(3, -1, -1,
+									infoHandler.obtainMessage(3, 6, -1,
 									"There are no other devices available, you are advertising the network for 1 minute")
 									.sendToTarget();
 																	
@@ -581,13 +581,13 @@ public class NetService extends Service {
 						{
 							if (device.deviceCanAdvertiseNetwork())
 							{								
-								infoHandler.obtainMessage(3, -1, -1,
+								infoHandler.obtainMessage(3, 6, -1,
 								"There are no other devices available, you are advertising the network")
 								.sendToTarget();
 																
 							} else {
 								
-								infoHandler.obtainMessage(3, -1, -1,
+								infoHandler.obtainMessage(3, 6, -1,
 								"There are no other devices available, you are advertising the network for 1 minute")
 								.sendToTarget();
 																

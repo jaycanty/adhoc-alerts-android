@@ -515,6 +515,8 @@ public class NetService extends Service {
 							
 							if (ni.network.size() < 2)
 							{
+								ni.setAcknowledged(false);
+								
 								if (device.deviceCanAdvertiseNetwork())
 								{								
 									infoHandler.obtainMessage(3, 6, -1,
@@ -529,7 +531,8 @@ public class NetService extends Service {
 																	
 									NetworkThread.sleep(50000);
 									
-									netOff();
+									if (!ni.isAcknowledged())
+										netOff();
 								}
 							}
 						}
@@ -579,6 +582,8 @@ public class NetService extends Service {
 						
 						if (ni.network.size() < 2)
 						{
+							ni.setAcknowledged(false);
+							
 							if (device.deviceCanAdvertiseNetwork())
 							{								
 								infoHandler.obtainMessage(3, 6, -1,
@@ -593,7 +598,8 @@ public class NetService extends Service {
 																
 								NetworkThread.sleep(50000);
 								
-								netOff();
+								if (!ni.isAcknowledged())
+									netOff();
 							}
 						}						
 						

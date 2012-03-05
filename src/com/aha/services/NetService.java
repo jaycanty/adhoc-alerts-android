@@ -399,14 +399,10 @@ public class NetService extends Service {
 							
 							outObject.setObject1(netVec);
 							outObject.setObject2(conVec);
-							
-							
+		
 							sendMessage(outObject);
 							
-							
-							NetworkNode nn = new NetworkNode(inObject.getLocalRank(),highIP);
-							nn.setHasNew(true);
-							ni.network.add(nn);
+							ni.network.add(new NetworkNode(inObject.getLocalRank(),highIP));
 							
 							if (netHandler != null)
 								netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
@@ -510,7 +506,7 @@ public class NetService extends Service {
 							
 							if (index > 0)
 							{
-								ni.conversations.remove(ni.network.get(index).getIp());
+								ni.conversations.remove(inObject.getOrginAddress());
 								ni.network.remove(index);	
 							}
 													
@@ -567,7 +563,7 @@ public class NetService extends Service {
 						
 						if (index > 0)
 						{
-							ni.conversations.remove(ni.network.get(index).getIp());
+							ni.conversations.remove(Constants.HUB_IP);
 							ni.network.remove(index);
 						}
 						

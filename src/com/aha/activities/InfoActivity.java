@@ -50,6 +50,8 @@ public class InfoActivity extends Activity {
     boolean mBound = false;
     ListView lv;
     Handler handler;
+    public static boolean inFocus;
+
     
     View stage1;
     View stage2;
@@ -70,6 +72,7 @@ public class InfoActivity extends Activity {
         ipTV = (TextView)this.findViewById(R.id.IPTV);
        
        ipTV.setText(Constants.BASE_ADDRESS + NetworkInfo.getInstance().getInitIP());
+       inFocus = false;
     }
            
 
@@ -96,7 +99,8 @@ public class InfoActivity extends Activity {
         super.onResume();
         // The activity has become visible (it is now "resumed").
         Intent intent = new Intent(this, NetService.class);
-        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);	        
+        getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);	  
+        inFocus = true;
     }
     
     @Override
@@ -105,6 +109,7 @@ public class InfoActivity extends Activity {
         if (mBound) {
         	getApplicationContext().unbindService(mConnection);
             mBound = false;
+            inFocus = false;
         }	        
         // Another activity is taking focus (this activity is about to be "paused").
     }	    

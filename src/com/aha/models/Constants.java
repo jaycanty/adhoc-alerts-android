@@ -10,6 +10,7 @@ public class Constants {
 	public static final int JOIN_ACK = 4;
 	public static final int QUIT = 5;
 	public static final int NEW_MEMBER = 6;
+	public static final int HUB = 7;
 	
 	public static final int BROADCAST = 255;
 	public static final int HUB_IP = 11;

@@ -129,7 +129,6 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
         if (mBound) {
         	getApplicationContext().unbindService(mConnection);
             mBound = false;
-            inFocus = false;
         }
     }
     

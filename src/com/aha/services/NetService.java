@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Vector;
 
 import com.aha.R;
+import com.aha.activities.InfoActivity;
 import com.aha.activities.NetworkActivity;
 import com.aha.models.AppInfo;
 import com.aha.models.Constants;
@@ -111,6 +112,30 @@ public class NetService extends Service {
 	public String netOff() {
 		
 		NetworkInfo ni = NetworkInfo.getInstance();
+		
+		if (ni.getMyIP() == Constants.HUB_IP)
+		{
+			NetworkNode maxNN = null;
+			long max = 0;
+			
+			for (int i=0; i<ni.network.size(); i++)
+			{
+				NetworkNode nn = ni.network.get(i);
+				
+				if (nn.getLocalRank() > max)
+				{
+					max = nn.getLocalRank();
+					maxNN = nn;
+				}
+			}
+			
+			DataObject dataObject = new DataObject();
+			dataObject.setDestinationAddress(maxNN.getIp());
+			dataObject.setOrginAddress(ni.getMyIP());
+			dataObject.setMessageType(Constants.HUB);
+			sendMessage(dataObject);			
+			
+		} 
 	
 		DataObject dataObject = new DataObject();
 		dataObject.setDestinationAddress(Constants.BROADCAST);
@@ -427,14 +452,6 @@ public class NetService extends Service {
 						}				
 						
 						break;
-					case Constants.NEW_MEMBER:
-						
-						if (ni.getMyIP() > 11)
-						{
-							ni.network.add(new NetworkNode(inObject.getLocalRank(), inObject.getAuxillaryAddress()));
-						}				
-						
-						break;
 					case Constants.ALERT:
 						
 						if (inObject.getDestinationAddress() == Constants.BROADCAST)
@@ -448,7 +465,7 @@ public class NetService extends Service {
 								v.add(inObject);
 								ni.conversations.put(Constants.BROADCAST, v);
 							}
-							if (NetworkActivity.inFocus)
+							if (NetworkActivity.inFocus || InfoActivity.inFocus)
 								ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);							
 													
 						} else {
@@ -462,7 +479,7 @@ public class NetService extends Service {
 								v.add(inObject);
 								ni.conversations.put(orginIP, v);
 							}
-							if (NetworkActivity.inFocus)
+							if (NetworkActivity.inFocus || InfoActivity.inFocus)
 								ni.getNetworkNode(orginIP).setHasNew(true);
 						}
 
@@ -473,6 +490,65 @@ public class NetService extends Service {
 						if (convoHandler != null)
 							convoHandler.obtainMessage(3, -1, -1, "")
 									.sendToTarget();
+						break;
+					case Constants.QUIT:
+						
+						if (inObject.getOrginAddress() != Constants.HUB_IP)
+						{
+							int index = 0;
+							
+							for (int i=0; i<ni.network.size(); i++)
+								if (ni.network.get(i).getIp() == inObject.getOrginAddress())
+									index = i;
+							
+							if (index > 0)
+								ni.network.remove(index);
+							
+							if (netHandler != null)
+								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();							
+							
+						}
+						break;
+					case Constants.NEW_MEMBER:
+						
+						if (ni.getMyIP() > 11)
+						{
+							ni.network.add(new NetworkNode(inObject.getLocalRank(), inObject.getAuxillaryAddress()));
+							
+							if (netHandler != null)
+								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();								
+						}				
+						break;
+					case Constants.HUB:
+						
+						DataObject dataObject = new DataObject();
+						dataObject.setDestinationAddress(Constants.BROADCAST);
+						dataObject.setOrginAddress(ni.getMyIP());
+						dataObject.setMessageType(Constants.QUIT);
+						sendMessage(dataObject);
+
+						ni.setMyIP(Constants.HUB_IP);
+						device.changeIP(Constants.HUB_IP);
+
+						int index = 0;
+						
+						for (int i=0; i<ni.network.size(); i++)
+							if (ni.network.get(i).getIp() == Constants.HUB_IP)
+								index = i;
+						
+						if (index > 0)
+							ni.network.remove(index);
+						
+						if (infoHandler != null)
+						{
+							infoHandler.obtainMessage(2, -1, -1, Constants.BASE_ADDRESS + Constants.HUB_IP).sendToTarget(); 
+							infoHandler.obtainMessage(3, 4, -1,
+							"You are the new hub.")
+							.sendToTarget();
+						}
+						if (netHandler != null)
+							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();							
+						
 						break;
 					}
 				}
@@ -486,6 +562,8 @@ public class NetService extends Service {
 	public void startNetwork(int lRank) {
 		
 		//"30minutes", "1hour", "2hours", "3hours"
+		
+		System.out.println("INDEX: " + lRank);
 		
 		long time = System.currentTimeMillis();
 		

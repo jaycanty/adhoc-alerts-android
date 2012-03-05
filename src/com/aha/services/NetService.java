@@ -351,6 +351,8 @@ public class NetService extends Service {
 						{
 							int highIP = 0;
 							
+							ni.setAcknowledged(true);
+							
 							if (ni.network.size() == 0 || ni.network.size() == 1 || ni.network == null) {
 								highIP = 13;
 								infoHandler.obtainMessage(3, 4, -1,

@@ -218,11 +218,7 @@ public class ConversationActivity extends Activity implements OnClickListener {
                 
         NetworkInfo ni = NetworkInfo.getInstance();
         
-        Vector<DataObject> v = null;
-        if (orginIP == Constants.BROADCAST)
-        	v = ni.conversations.get(orginIP);
-        else
-        	v = ni.conversations.get(orginIP);
+        Vector<DataObject> v = ni.conversations.get(orginIP);
         
         if (v!=null)
         {

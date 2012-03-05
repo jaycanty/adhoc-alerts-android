@@ -51,6 +51,7 @@ public class NetService extends Service {
 	private DatagramSocket outSocket;
 	private ReceiveMessageThread rmt;
 	private NetworkThread nt;
+	public static boolean quit = false;
 
 	@Override
 	public void onCreate() {
@@ -110,6 +111,7 @@ public class NetService extends Service {
 	public String netOff() {
 		
 		NetworkInfo ni = NetworkInfo.getInstance();
+		NetService.quit = true;
 		
 		if (ni.getMyIP() == Constants.HUB_IP)
 		{
@@ -125,10 +127,7 @@ public class NetService extends Service {
 				if (nn.getLocalRank() > max)
 				{
 					max = nn.getLocalRank();
-					maxNN = nn;
-					
-					System.out.println("Got to here " + maxNN.getIp() + " " + maxNN.getLocalRank());
-					
+					maxNN = nn;					
 				}
 			}
 			
@@ -293,10 +292,11 @@ public class NetService extends Service {
 						{
 							NetworkInfo ni = NetworkInfo.getInstance();
 							
-							if (inObject.getOrginAddress() == ni.getMyIP())
+							if (inObject.getOrginAddress() == ni.getMyIP() && NetService.quit)
 							{
 								System.out.println("QUIT");
 								ni.setNetworkUp(false);
+								NetService.quit = false;
 							}
 						}
 					} catch (Exception e) {
@@ -513,23 +513,25 @@ public class NetService extends Service {
 							if (netHandler != null)
 								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();	
 							
-							if (device.deviceCanAdvertiseNetwork())
-							{								
-								infoHandler.obtainMessage(3, -1, -1,
-								"There are no other devices available, you are advertising the network")
-								.sendToTarget();
-																
-							} else {
-								
-								infoHandler.obtainMessage(3, -1, -1,
-								"There are no other devices available, you are advertising the network for 1 minute")
-								.sendToTarget();
-																
-								NetworkThread.sleep(50000);
-								
-								netOff();
+							if (ni.network.size() < 2)
+							{
+								if (device.deviceCanAdvertiseNetwork())
+								{								
+									infoHandler.obtainMessage(3, -1, -1,
+									"There are no other devices available, you are advertising the network")
+									.sendToTarget();
+																	
+								} else {
+									
+									infoHandler.obtainMessage(3, -1, -1,
+									"There are no other devices available, you are advertising the network for 1 minute")
+									.sendToTarget();
+																	
+									NetworkThread.sleep(50000);
+									
+									netOff();
+								}
 							}
-							
 						}
 						break;
 					case Constants.NEW_MEMBER:
@@ -543,9 +545,7 @@ public class NetService extends Service {
 						}				
 						break;
 					case Constants.HUB:
-						
-						System.out.println("Got to here-------------------------------------");
-						
+												
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);
 						dataObject.setOrginAddress(ni.getMyIP());
@@ -575,7 +575,27 @@ public class NetService extends Service {
 							.sendToTarget();
 						}
 						if (netHandler != null)
-							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();							
+							netHandler.obtainMessage(2, -1, -1, "").sendToTarget();			
+						
+						if (ni.network.size() < 2)
+						{
+							if (device.deviceCanAdvertiseNetwork())
+							{								
+								infoHandler.obtainMessage(3, -1, -1,
+								"There are no other devices available, you are advertising the network")
+								.sendToTarget();
+																
+							} else {
+								
+								infoHandler.obtainMessage(3, -1, -1,
+								"There are no other devices available, you are advertising the network for 1 minute")
+								.sendToTarget();
+																
+								NetworkThread.sleep(50000);
+								
+								netOff();
+							}
+						}						
 						
 						break;
 					}

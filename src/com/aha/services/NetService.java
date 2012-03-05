@@ -390,9 +390,12 @@ public class NetService extends Service {
 						{
 							System.out.println("THE JOIN HAS BEEN ACKED MYIP BY: " + inObject.getOrginAddress());
 							
-							Vector<NetworkNode> netVec =  (Vector<NetworkNode>)inObject.getObject1();
-							Vector<DataObject> conVec = (Vector<DataObject>)inObject.getObject2();
-
+							//Vector<NetworkNode> netVec =  (Vector<NetworkNode>)inObject.getObject1();
+							//Vector<DataObject> conVec = (Vector<DataObject>)inObject.getObject2();
+							
+							ni.network = (Vector<NetworkNode>)inObject.getObject1();
+							ni.conversations.put(Constants.BROADCAST, (Vector<DataObject>)inObject.getObject2());
+/*
 							// clean nn's
 							for (int i=0; i<netVec.size(); i++)
 							{
@@ -403,9 +406,11 @@ public class NetService extends Service {
 							{
 								System.out.println("DO: " + conVec.get(i).getMessage());
 							}							
-							
+	*/						
 							ni.setAcknowledged(true);
-
+							
+							
+							/*
 							ni.network.add(new NetworkNode(0, 0, Constants.BROADCAST));
 							ni.network.add(new NetworkNode(0,0,inObject.getOrginAddress()));
 							
@@ -413,7 +418,7 @@ public class NetService extends Service {
 							v.add(inObject);
 							ni.conversations.put(Constants.BROADCAST, v);
 							ni.getNetworkNode(Constants.BROADCAST).setHasNew(true);	
-							
+							*/
 							int ip = 0;
 
 							ip = inObject.getAuxillaryAddress();

@@ -20,10 +20,9 @@ public class NetworkInfo {
 	
 	private int myIP;
 	
-	//private int GlobalRank;
+	private long localRank;
 	
 	public Map<Integer, Vector<DataObject>> conversations;
-	//public HashMap<String, String> network;
 	public Vector<NetworkNode> network;
 	public Vector<Integer> myNetwork;
 	private int[] initIPList = {1,2,3,4,5,6,7,8,9,10};
@@ -34,7 +33,6 @@ public class NetworkInfo {
 		deviceInitiated = false;
 		joined = false;
 		conversations = Collections.synchronizedMap(new HashMap<Integer, Vector<DataObject>>());
-		//network = new HashMap<String, String>(); //(HashMap<String, String>)Collections.synchronizedMap(new HashMap<String, String>());
 		network = new Vector<NetworkNode>();
 	}	
 		
@@ -61,6 +59,14 @@ public class NetworkInfo {
 		this.myIP = myIP;
 	}
 	
+	public long getLocalRank() {
+		return localRank;
+	}
+
+	public void setLocalRank(long localRank) {
+		this.localRank = localRank;
+	}
+
 	public synchronized boolean isNetworkUp() {
 		return networkUp;
 	}

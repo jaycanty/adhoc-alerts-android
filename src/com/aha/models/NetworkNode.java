@@ -6,16 +6,14 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 
 	private static final long serialVersionUID = 1L;
 	
-	private int localRank;
-	private int globalRank;
+	private long localRank;
 	private int ip;
 	private boolean hasNew;
 	
 	
-	public NetworkNode(int localRank, int globalRank, int ip)
+	public NetworkNode(long localRank, int ip)
 	{
 		this.localRank = localRank;
-		this.globalRank = globalRank;
 		this.ip = ip;
 		this.hasNew = false;
 	}
@@ -23,23 +21,17 @@ public class NetworkNode implements Serializable, Comparable<Object> {
 	public NetworkNode(NetworkNode nn)
 	{
 		this.localRank = nn.getLocalRank();
-		this.globalRank = nn.getGlobalRank();
 		this.ip = nn.getIp();
 		this.hasNew = false;
 	}
 	
-	public synchronized int getLocalRank() {
+	public synchronized long getLocalRank() {
 		return localRank;
 	}
-	public synchronized void setLocalRank(int localRank) {
+	public synchronized void setLocalRank(long localRank) {
 		this.localRank = localRank;
 	}
-	public synchronized int getGlobalRank() {
-		return globalRank;
-	}
-	public synchronized void setGlobalRank(int globalRank) {
-		this.globalRank = globalRank;
-	}
+	
 	public synchronized int getIp() {
 		return ip;
 	}

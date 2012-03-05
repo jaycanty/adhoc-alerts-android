@@ -340,6 +340,7 @@ public class NetService extends Service {
 							DataObject bcastObject = new DataObject();
 							bcastObject.setDestinationAddress(Constants.BROADCAST);
 							bcastObject.setOrginAddress(ni.getMyIP());
+							bcastObject.setLocalRank(ni.getLocalRank());
 							bcastObject.setAuxillaryAddress(highIP);
 							bcastObject.setMessageType(Constants.NEW_MEMBER);
 							bcastObject.setMessage("" + highIP + " welcome to the network!");	
@@ -366,14 +367,14 @@ public class NetService extends Service {
 							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
 							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
 							// add me
-							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
+							netVec.add(new NetworkNode(ni.getLocalRank(),ni.getMyIP()));
 							
 							outObject.setObject1(netVec);
 							outObject.setObject2(conVec);
 							
 							sendMessage(outObject);
 						
-							ni.network.add(new NetworkNode(0,0,highIP));
+							ni.network.add(new NetworkNode(inObject.getLocalRank(),highIP));
 							
 							if (netHandler != null)
 								netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
@@ -394,20 +395,16 @@ public class NetService extends Service {
 							
 							ni.conversations.put(Constants.BROADCAST, conVec);
 
-							// clean nn's
+							// load nn's
 							for (int i=0; i<netVec.size(); i++)
 							{
 								NetworkNode nn = new NetworkNode(netVec.get(i));
 								if (nn.getIp() == Constants.BROADCAST)
 									nn.setHasNew(true);
 								ni.network.add(nn);
-								System.out.println("NET NODE: " + netVec.get(i).getIp());
-							}
-							
-							for (int i=0; i<conVec.size(); i++)
-							{
-								System.out.println("DO: " + conVec.get(i).getMessage());
-							}							
+								System.out.println("NET NODE: " + netVec.get(i).getLocalRank());
+							}	
+							Collections.sort(ni.network);
 							
 							ni.setAcknowledged(true);
 							
@@ -434,7 +431,7 @@ public class NetService extends Service {
 						
 						if (ni.getMyIP() > 11)
 						{
-							ni.network.add(new NetworkNode(0,0, inObject.getAuxillaryAddress()));
+							ni.network.add(new NetworkNode(inObject.getLocalRank(), inObject.getAuxillaryAddress()));
 						}				
 						
 						break;
@@ -487,7 +484,27 @@ public class NetService extends Service {
 	}// end inner class
 
 	public void startNetwork(int lRank) {
-
+		
+		//"30minutes", "1hour", "2hours", "3hours"
+		
+		long time = System.currentTimeMillis();
+		
+		switch (lRank) {
+		case 0:
+			time += 30 * 60 * 1000;
+			break;
+		case 1:
+			time += 60 * 60 * 1000;
+			break;		
+		case 2:
+			time += 120 * 60 * 1000;
+			break;
+		case 3:
+			time += 360 * 60 * 1000;
+			break;
+		}
+		NetworkInfo.getInstance().setLocalRank(time);
+		
 		nt = new NetworkThread();
 		nt.start();
 
@@ -555,6 +572,7 @@ public class NetService extends Service {
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);
 						dataObject.setOrginAddress(ni.getMyIP());
+						dataObject.setLocalRank(ni.getLocalRank());
 						dataObject.setMessageType(Constants.JOIN);
 						sendMessage(dataObject);	
 						
@@ -566,7 +584,7 @@ public class NetService extends Service {
 							
 							ni.setMyIP(11);
 							device.changeIP(11);
-							ni.network.add(new NetworkNode(0,0,Constants.BROADCAST));
+							ni.network.add(new NetworkNode(ni.getLocalRank(),Constants.BROADCAST));
 							
 							// for eris type, which can continue to 
 							if (device.deviceCanAdvertiseNetwork())

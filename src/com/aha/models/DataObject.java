@@ -10,8 +10,7 @@ public class DataObject implements Serializable {
 	private int destinationAddress;
 	private int orginAddress;
 	private int auxillaryAddress;
-	private int localRank;
-	private int globalRank;
+	private long localRank;
 	private String message;
 	
 	private Object object1;
@@ -26,7 +25,6 @@ public class DataObject implements Serializable {
 		this.orginAddress = dataO.getOrginAddress();
 		this.auxillaryAddress = dataO.getOrginAddress();
 		this.localRank = dataO.getLocalRank();
-		this.globalRank = dataO.getGlobalRank();
 		this.message = dataO.getMessage();
 		
 		this.object1 = null; //dataO.getObject1();
@@ -66,20 +64,12 @@ public class DataObject implements Serializable {
 		this.auxillaryAddress = auxillaryAddress;
 	}
 
-	public int getLocalRank() {
+	public long getLocalRank() {
 		return localRank;
 	}
 
-	public void setLocalRank(int localRank) {
+	public void setLocalRank(long localRank) {
 		this.localRank = localRank;
-	}
-
-	public int getGlobalRank() {
-		return globalRank;
-	}
-
-	public void setGlobalRank(int globalRank) {
-		this.globalRank = globalRank;
 	}
 
 	public String getMessage() {

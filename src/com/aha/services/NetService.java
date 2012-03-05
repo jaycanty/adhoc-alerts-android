@@ -336,6 +336,15 @@ public class NetService extends Service {
 							
 							System.out.println(highIP);
 							
+							//highIP notify others
+							DataObject bcastObject = new DataObject();
+							bcastObject.setDestinationAddress(Constants.BROADCAST);
+							bcastObject.setOrginAddress(ni.getMyIP());
+							bcastObject.setAuxillaryAddress(highIP);
+							bcastObject.setMessageType(Constants.NEW_MEMBER);
+							bcastObject.setMessage("" + highIP + " welcome to the network!");	
+							sendMessage(bcastObject);
+							
 							DataObject outObject = new DataObject();
 							outObject.setDestinationAddress(inObject
 									.getOrginAddress());
@@ -356,21 +365,8 @@ public class NetService extends Service {
 							//load network
 							Vector<DataObject> conVec = new Vector<DataObject>(ni.conversations.get(Constants.BROADCAST));
 							Vector<NetworkNode> netVec =  new Vector<NetworkNode>(ni.network);
-														
 							// add me
 							netVec.add(new NetworkNode(0,0,ni.getMyIP()));
-
-							// clean nn's
-							for (int i=0; i<netVec.size(); i++)
-							{
-								NetworkNode nn = netVec.get(i);
-								if (nn.getIp() == Constants.BROADCAST)
-									nn.setHasNew(true);
-								else
-									nn.setHasNew(false);
-								
-								System.out.println("NET NODE: " + nn.getIp());
-							}
 							
 							outObject.setObject1(netVec);
 							outObject.setObject2(conVec);
@@ -401,7 +397,10 @@ public class NetService extends Service {
 							// clean nn's
 							for (int i=0; i<netVec.size(); i++)
 							{
-								ni.network.add(new NetworkNode(netVec.get(i)));
+								NetworkNode nn = new NetworkNode(netVec.get(i));
+								if (nn.getIp() == Constants.BROADCAST)
+									nn.setHasNew(true);
+								ni.network.add(nn);
 								System.out.println("NET NODE: " + netVec.get(i).getIp());
 							}
 							
@@ -428,6 +427,14 @@ public class NetService extends Service {
 							if (netHandler != null)
 								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();								
 
+						}				
+						
+						break;
+					case Constants.NEW_MEMBER:
+						
+						if (ni.getMyIP() > 11)
+						{
+							ni.network.add(new NetworkNode(0,0, inObject.getAuxillaryAddress()));
 						}				
 						
 						break;

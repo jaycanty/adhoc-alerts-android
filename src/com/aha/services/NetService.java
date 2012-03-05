@@ -185,7 +185,7 @@ public class NetService extends Service {
 				len[3 - i] = (byte) ((l & (0xff << shift)) >>> shift);
 			}
 
-			byte[] packet = new byte[1024];
+			byte[] packet = new byte[4096];
 
 			System.arraycopy(len, 0, packet, 0, len.length);
 			System.arraycopy(buf, 0, packet, len.length, buf.length);
@@ -232,7 +232,7 @@ public class NetService extends Service {
 				while (NetworkInfo.getInstance().isNetworkUp()) {
 					try {
 						// 52kb buffer
-						byte[] buffer = new byte[1024];
+						byte[] buffer = new byte[4096];
 
 						DatagramPacket brodcastReceivePacket = new DatagramPacket(
 								buffer, buffer.length);

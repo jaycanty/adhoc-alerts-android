@@ -71,6 +71,7 @@ public class InfoActivity extends Activity {
         statusTV = (TextView)this.findViewById(R.id.StatusTV);
         ipTV = (TextView)this.findViewById(R.id.IPTV);
        
+       AppInfo.getInstance();
        ipTV.setText(Constants.BASE_ADDRESS + NetworkInfo.getInstance().getInitIP());
        inFocus = false;
     }

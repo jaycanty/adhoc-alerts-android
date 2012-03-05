@@ -35,23 +35,6 @@
 			   </TextView>	
 		</LinearLayout> 
 		<LinearLayout 
-		  android:orientation="horizontal"
-		  android:layout_width="fill_parent"
-		  android:layout_height="wrap_content">
-			   <TextView android:layout_width="wrap_content"
-			     android:layout_height="wrap_content" 
-			     android:gravity="left"
-			     android:textSize="28px"
-			     android:text="MY HANDLE: "> 
-			   </TextView>	
-			   <TextView android:layout_width="wrap_content"
-			     android:layout_height="wrap_content" 
-			     android:gravity="left"
-			     android:textSize="28px"
-			     android:text="JAY"> 
-			   </TextView>	
-		</LinearLayout> 
-		<LinearLayout 
 		  android:orientation="vertical"
 		  android:layout_width="fill_parent"
 		  android:layout_height="fill_parent"

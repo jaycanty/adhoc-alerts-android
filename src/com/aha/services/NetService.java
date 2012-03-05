@@ -54,9 +54,7 @@ public class NetService extends Service {
 
 	@Override
 	public void onCreate() {
-		
-		System.out.println("service started ------------------------------------------------------------");
-		
+				
 		// write scripts to sdcard
 		String[] scriptArray = {"connect", "cli"}; 		
 		for (int i=0; i<scriptArray.length; i++)
@@ -115,6 +113,8 @@ public class NetService extends Service {
 		
 		if (ni.getMyIP() == Constants.HUB_IP)
 		{
+			System.out.println("Got to here");
+			
 			NetworkNode maxNN = null;
 			long max = 0;
 			
@@ -126,6 +126,9 @@ public class NetService extends Service {
 				{
 					max = nn.getLocalRank();
 					maxNN = nn;
+					
+					System.out.println("Got to here " + maxNN.getIp() + " " + maxNN.getLocalRank());
+					
 				}
 			}
 			
@@ -520,6 +523,8 @@ public class NetService extends Service {
 						}				
 						break;
 					case Constants.HUB:
+						
+						System.out.println("Got to here-------------------------------------");
 						
 						DataObject dataObject = new DataObject();
 						dataObject.setDestinationAddress(Constants.BROADCAST);

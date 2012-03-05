@@ -400,9 +400,13 @@ public class NetService extends Service {
 							outObject.setObject1(netVec);
 							outObject.setObject2(conVec);
 							
+							
 							sendMessage(outObject);
-						
-							ni.network.add(new NetworkNode(inObject.getLocalRank(),highIP));
+							
+							
+							NetworkNode nn = new NetworkNode(inObject.getLocalRank(),highIP);
+							nn.setHasNew(true);
+							ni.network.add(nn);
 							
 							if (netHandler != null)
 								netHandler.obtainMessage(2, -1, -1, "").sendToTarget(); 	
@@ -505,10 +509,30 @@ public class NetService extends Service {
 									index = i;
 							
 							if (index > 0)
-								ni.network.remove(index);
-							
+							{
+								ni.conversations.remove(ni.network.get(index).getIp());
+								ni.network.remove(index);	
+							}
+													
 							if (netHandler != null)
-								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();							
+								netHandler.obtainMessage(2, -1, -1, "").sendToTarget();	
+							
+							if (device.deviceCanAdvertiseNetwork())
+							{								
+								infoHandler.obtainMessage(3, -1, -1,
+								"There are no other devices available, you are advertising the network")
+								.sendToTarget();
+																
+							} else {
+								
+								infoHandler.obtainMessage(3, -1, -1,
+								"There are no other devices available, you are advertising the network for 1 minute")
+								.sendToTarget();
+																
+								NetworkThread.sleep(50000);
+								
+								netOff();
+							}
 							
 						}
 						break;
@@ -542,7 +566,10 @@ public class NetService extends Service {
 								index = i;
 						
 						if (index > 0)
+						{
+							ni.conversations.remove(ni.network.get(index).getIp());
 							ni.network.remove(index);
+						}
 						
 						if (infoHandler != null)
 						{
@@ -689,8 +716,7 @@ public class NetService extends Service {
 								NetworkThread.sleep(50000);
 								
 								netOff();
-								
-								
+
 							}	
 
 						}		

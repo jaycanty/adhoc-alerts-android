@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Vector;
 
 import com.aha.R;
 import android.widget.ArrayAdapter;
 
 import com.aha.models.AppInfo;
 import com.aha.models.Constants;
+import com.aha.models.DataObject;
 import com.aha.models.NetworkInfo;
 import com.aha.models.NetworkNode;
 import com.aha.services.NetService;
@@ -62,6 +64,25 @@ public class NetworkActivity extends Activity implements OnItemClickListener {
        lv.setAdapter(networkAdapter); 
        lv.setOnItemClickListener(this);          
        inFocus = false;
+       
+       NetworkInfo ni = NetworkInfo.getInstance();
+       
+       ni.network.add(new NetworkNode(0,255));
+       
+       NetworkNode nn = new NetworkNode(0,13);
+       nn.setHasNew(true);
+       ni.network.add(nn);
+       
+       DataObject doo = new DataObject();
+       
+       doo.setMessage("Water shippment at the post");
+       
+       Vector<DataObject> v = new Vector<DataObject>();
+       
+       v.add(doo);
+    		   
+       ni.conversations.put(13, v);
+       
     }
         
     public void onItemClick(AdapterView<?> parent, View view,
